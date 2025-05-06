@@ -1,6 +1,6 @@
 const header = document.getElementById('header');
 
-// Morse code flicker pattern for 'observer.void'
+// Morse code pattern for 'observer.void' (dot = 100ms, dash = 300ms)
 const flickerPattern = [
   300, 100, // O
   300, 100, 100, 100, // B
@@ -11,7 +11,7 @@ const flickerPattern = [
   100, // E
   100, 300, 100, 100, // R
 
-  500, // pause between parts
+  500, // pause
 
   100, 100, 100, 300, // V
   300, 100, // O
@@ -19,7 +19,7 @@ const flickerPattern = [
   300, 100, 100, 100 // D
 ];
 
-// Glitch color rotation: neon orange → dark orange → black
+// Flicker colors: neon → dark orange → black
 const colors = ["#ffa500", "#cc5500"];
 
 function flickerText(pattern, repeat = false) {
@@ -29,20 +29,18 @@ function flickerText(pattern, repeat = false) {
     if (i >= pattern.length) {
       if (repeat) {
         i = 0;
-        setTimeout(flicker, 1000); // delay before repeating the word
+        setTimeout(flicker, 1000);
       }
       return;
     }
 
-    // Flicker ON
     header.style.color = colors[i % colors.length];
     setTimeout(() => {
-      // Flicker OFF
       header.style.color = "#000000";
       setTimeout(() => {
         i++;
         flicker();
-      }, 100); // OFF duration
+      }, 100);
     }, pattern[i]);
   }
 
