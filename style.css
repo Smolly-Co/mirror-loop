@@ -1,18 +1,40 @@
+body {
+  background: black;
+  margin: 0;
+  padding: 0;
+  font-family: 'Courier New', Courier, monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.container {
+  text-align: center;
+}
+
+.glitchy {
+  font-size: 4rem;
+  font-weight: bold;
+  color: black;
+  transition: color 0.2s;
+}
+
 input#argInput {
-    margin-top: 30px;
-    padding: 12px;
-    font-size: 1rem;
-    background-color: #1a1a1a;
-    border: 1px solid #444;
-    color: #fff;
-    width: 300px;
-    text-align: center;
-    border-radius: 5px;
-    outline: none;
-    font-family: 'Courier New', Courier, monospace;
-    transition: box-shadow 0.2s ease-in-out;
+  margin-top: 30px;
+  padding: 12px;
+  font-size: 1rem;
+  background-color: #1a1a1a;
+  border: 1px solid #444;
+  color: #fff;
+  width: 300px;
+  text-align: center;
+  border-radius: 5px;
+  outline: none;
+  font-family: 'Courier New', Courier, monospace;
+  transition: box-shadow 0.2s ease-in-out;
 }
 
 input#argInput:focus {
-    box-shadow: 0 0 8px #ff69b4, 0 0 8px #00ffff;
+  box-shadow: 0 0 8px #ffa500, 0 0 8px #cc5500;
 }
