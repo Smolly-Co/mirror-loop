@@ -1,136 +1,81 @@
-/* General Styles */
+/* Global Styles */
 body {
-  background-color: #121212; /* Dark background for eerie effect */
-  color: #ccc; /* Light text for contrast */
-  font-family: 'Courier New', Courier, monospace; /* Monospace font for coding vibe */
+  font-family: 'Courier New', Courier, monospace;
+  background-color: black;
+  color: #f5f5f5;
   margin: 0;
   padding: 0;
 }
 
-h1 {
+.container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 50px;
   text-align: center;
-  font-size: 2.5em;
-  color: #ff5c8d; /* Spooky pinkish color */
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
-  margin-top: 20px;
 }
 
-.container {
-  width: 80%;
-  margin: 20px auto;
-  padding: 10px;
+h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0px 0px 5px rgba(255, 0, 0, 0.8), 0px 0px 10px rgba(255, 0, 0, 0.6);
 }
 
 .journal-entry {
-  font-size: 1.2em;
+  font-size: 1.2rem;
   line-height: 1.6;
   margin-top: 20px;
-  padding: 20px;
-  border: 2px solid #ff5c8d;
-  background-color: #1a1a1a;
-  box-shadow: 0 0 10px rgba(255, 92, 141, 0.8);
 }
 
-.journal-entry p {
-  margin-bottom: 1.5em;
+#argInput {
+  width: 80%;
+  padding: 10px;
+  font-size: 1rem;
+  margin-top: 20px;
+  background-color: #222;
+  border: 1px solid #444;
+  color: #fff;
+  outline: none;
 }
 
-/* Smolly-Co Flickering Text Styles */
-.flicker-text {
-  font-weight: bold;
-  font-size: 3em;
-  text-align: center;
-  letter-spacing: 2px;
-  animation: flicker 1.5s infinite;
-  color: #ff5c8d;
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+#argInput:focus {
+  border-color: #f5f5f5;
+  background-color: #333;
 }
 
-@keyframes flicker {
+.glitchy {
+  position: relative;
+  display: inline-block;
+}
+
+.glitchy:before, .glitchy:after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #f5f5f5;
+  background: #000;
+  z-index: -1;
+  clip-path: inset(0 0 0 0);
+  animation: glitch 2s infinite linear;
+}
+
+.glitchy:after {
+  animation-delay: 1s;
+}
+
+@keyframes glitch {
   0% {
-    opacity: 0.3;
-    color: #ff5c8d;
-  }
-  10% {
-    opacity: 0.7;
-    color: #ff5c8d;
-  }
-  20% {
-    opacity: 1;
-    color: #ff5c8d;
-  }
-  30% {
-    opacity: 0.6;
-    color: #ff5c8d;
-  }
-  40% {
-    opacity: 0.2;
-    color: #ff5c8d;
+    clip-path: inset(0 0 0 0);
+    transform: skew(-0.5deg);
   }
   50% {
-    opacity: 0.7;
-    color: #ff5c8d;
-  }
-  60% {
-    opacity: 1;
-    color: #ff5c8d;
-  }
-  70% {
-    opacity: 0.6;
-    color: #ff5c8d;
-  }
-  80% {
-    opacity: 0.3;
-    color: #ff5c8d;
-  }
-  90% {
-    opacity: 0.7;
-    color: #ff5c8d;
+    clip-path: inset(0 10px 0 0);
+    transform: skew(0.5deg);
   }
   100% {
-    opacity: 1;
-    color: #ff5c8d;
+    clip-path: inset(0 0 0 0);
+    transform: skew(-0.5deg);
   }
-}
-
-/* Input Box Styles */
-input[type="text"] {
-  width: 50%;
-  padding: 10px;
-  font-size: 1.2em;
-  color: #fff;
-  background-color: #333;
-  border: 2px solid #ff5c8d;
-  border-radius: 5px;
-  margin-top: 20px;
-  text-align: center;
-}
-
-input[type="text"]:focus {
-  outline: none;
-  background-color: #444;
-  box-shadow: 0 0 5px #ff5c8d;
-}
-
-/* Success Message Styles */
-.success-message {
-  font-size: 1.5em;
-  color: #4caf50; /* Green */
-  text-align: center;
-  margin-top: 20px;
-}
-
-.error-message {
-  font-size: 1.5em;
-  color: #ff0000; /* Red */
-  text-align: center;
-  margin-top: 20px;
-}
-
-/* Footer (Optional) */
-footer {
-  text-align: center;
-  font-size: 0.9em;
-  color: #aaa;
-  margin-top: 40px;
 }
