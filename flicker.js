@@ -65,12 +65,8 @@ argInput.addEventListener('keydown', function (event) {
     ];
 
     if (validInputs.includes(inputValue)) {
-      // Do something if correct input is given (e.g., show message, redirect, etc.)
-      header.textContent = "ACCESS GRANTED";
-      setTimeout(() => {
-        header.textContent = "Smolly-Co"; // Return to original text after a short time
-      }, 2000);
+      // Redirect to the "document.html" page
+      window.location.href = "document.html";
     }
-    // Do nothing if invalid input is entered
   }
 });
