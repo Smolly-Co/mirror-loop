@@ -1,4 +1,5 @@
 const header = document.getElementById('header');
+const argInput = document.getElementById('argInput');
 
 // Morse code pattern for 'observer.void' (dot = 100ms, dash = 300ms)
 const flickerPattern = [
@@ -48,3 +49,27 @@ function flickerText(pattern, repeat = false) {
 }
 
 flickerText(flickerPattern, true);
+
+// Input check (case-insensitive and accepting all variations of "observer.void")
+argInput.addEventListener('input', function () {
+  const inputValue = argInput.value.trim().toLowerCase();
+  
+  // Accepted input variations
+  const validInputs = [
+    "observervoid",
+    "observer.void",
+    "observer-void",
+    "observer void"
+  ];
+
+  if (validInputs.includes(inputValue)) {
+    // Do something if correct input is given (e.g., show message, redirect, etc.)
+    header.textContent = "ACCESS GRANTED";
+    setTimeout(() => {
+      header.textContent = "Smolly-Co"; // Return to original text after a short time
+    }, 2000);
+  } else {
+    // Optionally, show "invalid command" message if the input is incorrect
+    header.textContent = "Invalid command...";
+  }
+});
