@@ -1,0 +1,21 @@
+body {
+    background-color: #0b0b0b;
+    color: #fff;
+    font-family: 'Courier New', Courier, monospace;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    text-align: center;
+}
+
+.glitchy {
+    font-size: 4rem;
+    font-weight: bold;
+    color: white;
+    transition: color 0.2s;
+}
