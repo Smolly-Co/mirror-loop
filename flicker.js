@@ -1,72 +1,48 @@
-const header = document.getElementById('header');
-const argInput = document.getElementById('argInput');
+const header = document.getElementById("header");
 
-// Morse code pattern for 'observer.void' (dot = 100ms, dash = 300ms)
-const flickerPattern = [
-  300, 100, // O
-  300, 100, 100, 100, // B
-  100, 100, 100, // S
-  100, // E
-  100, 300, 100, 100, // R
-  100, 100, 100, 300, // V
-  100, // E
-  100, 300, 100, 100, // R
+// Morse code for "observervoid"
+const morseCode = {
+  "o": "---",
+  "b": "-...",
+  "s": "...",
+  "e": ".",
+  "r": ".-.",
+  "v": "...-",
+  "i": "..",
+  "d": "-.."
+};
 
-  500, // pause
+const word = "observervoid";
+let sequence = "";
 
-  100, 100, 100, 300, // V
-  300, 100, // O
-  100, 100, // I
-  300, 100, 100, 100 // D
-];
-
-// Flicker colors: neon → dark orange → black
-const colors = ["#ffa500", "#cc5500"];
-
-function flickerText(pattern, repeat = false) {
-  let i = 0;
-
-  function flicker() {
-    if (i >= pattern.length) {
-      if (repeat) {
-        i = 0;
-        setTimeout(flicker, 1000);
-      }
-      return;
-    }
-
-    header.style.color = colors[i % colors.length];
-    setTimeout(() => {
-      header.style.color = "#000000";
-      setTimeout(() => {
-        i++;
-        flicker();
-      }, 100);
-    }, pattern[i]);
+// Convert word to Morse sequence
+for (let letter of word) {
+  if (morseCode[letter]) {
+    sequence += morseCode[letter] + " "; // space between letters
   }
-
-  flicker();
 }
 
-flickerText(flickerPattern, true);
+let index = 0;
 
-// Input check (case-insensitive and accepting all variations of "observer.void")
-argInput.addEventListener('keydown', function (event) {
-  // Trigger only when "Enter" is pressed
-  if (event.key === 'Enter') {
-    const inputValue = argInput.value.trim().toLowerCase();
-    
-    // Accepted input variations
-    const validInputs = [
-      "observervoid",
-      "observer.void",
-      "observer-void",
-      "observer void"
-    ];
+function flicker() {
+  const char = sequence[index];
 
-    if (validInputs.includes(inputValue)) {
-      // Redirect to the "document.html" page
-      window.location.href = "document.html";
-    }
+  if (char === ".") {
+    header.style.color = "black";
+    setTimeout(() => header.style.color = "#FFA500", 300); // dot = short flicker
+    setTimeout(flicker, 600); // pause before next
+  } else if (char === "-") {
+    header.style.color = "black";
+    setTimeout(() => header.style.color = "#FF4500", 700); // dash = long flicker
+    setTimeout(flicker, 1000);
+  } else if (char === " ") {
+    header.style.color = "#FF8C00"; // between letters
+    setTimeout(flicker, 800);
+  } else {
+    setTimeout(flicker, 500);
   }
-});
+
+  index = (index + 1) % sequence.length;
+}
+
+flicker();
