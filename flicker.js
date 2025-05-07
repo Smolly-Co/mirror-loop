@@ -13,7 +13,13 @@ document.addEventListener("DOMContentLoaded", () => {
       ];
 
       if (validInputs.includes(value)) {
-        window.location.href = "document.html"; // or your secret page
+        document.body.classList.add("flash-morse");
+
+        // Simulate Morse flicker and then redirect
+        setTimeout(() => {
+          document.body.classList.remove("flash-morse");
+          window.location.href = "document.html";
+        }, 4000); // enough time to flash
       }
     }
   });
