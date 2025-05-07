@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
   let flickerTimeout;
 
   function startFlicker() {
-    let morseCode = ".... . .-.. .-.. --- / .-- --- .-. .-.. -.."; // Example of Morse code for 'hello world'
+    let morseCode = "--- ...- ... . .-. ...- . .-. / ...- --- .. -.."; // Morse code for 'observer void'
     let morseIndex = 0;
     
     function flickerLoop() {
@@ -16,20 +16,20 @@ document.addEventListener('DOMContentLoaded', function () {
         } else if (morseCode[morseIndex] === '-') {
           header.style.color = 'black'; // Black for dash
         } else {
-          header.style.color = 'orange'; // Reset to original color (you can adjust to your preferred color)
+          header.style.color = 'orange'; // Reset to original color
         }
         morseIndex++;
       } else {
-        morseIndex = 0; // Reset the index after a complete loop
+        morseIndex = 0; // Reset after a complete loop
       }
-      flickerTimeout = setTimeout(flickerLoop, 200); // Adjust timing for flicker speed
+      flickerTimeout = setTimeout(flickerLoop, 200); // Adjust flicker speed
     }
 
-    flickerLoop(); // Start the flickering loop immediately
+    flickerLoop(); // Start flickering immediately when the page loads
   }
 
   function stopFlicker() {
-    clearTimeout(flickerTimeout); // Stop the flickering when needed
+    clearTimeout(flickerTimeout); // Stop flickering
     header.style.color = 'orange'; // Reset to the original color
   }
 
@@ -41,9 +41,9 @@ document.addEventListener('DOMContentLoaded', function () {
       let userInput = input.value.trim().toLowerCase();
 
       if (userInput === 'observer void') {
-        // If the correct command is entered
-        window.location.href = 'https://smolly-co.github.io/mirror-loop/project-manager-log.html'; // Change the URL
-        stopFlicker(); // Stop the flickering
+        // If the correct command is entered, change the URL to the updated page
+        window.location.href = 'https://smolly-co.github.io/mirror-loop/observer.void.ai.html'; // Update this URL
+        stopFlicker(); // Stop flickering
       } else {
         // Invalid command
         console.log('Invalid Command');
