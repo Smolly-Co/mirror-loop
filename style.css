@@ -87,3 +87,58 @@ h1 {
     transform: skew(-0.5deg);
   }
 }
+
+/* Project Manager Journal Styling */
+body {
+  font-family: 'Courier New', Courier, monospace; /* Handwritten-like font */
+  background-color: #fff; /* White background */
+  color: #000; /* Black text */
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 50px;
+  text-align: left; /* Left-align text */
+  position: relative;
+}
+
+h1 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: right;
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  transform: rotate(-5deg); /* Slanted "4/3/'05" */
+  font-family: 'Courier New', Courier, monospace;
+  font-style: italic;
+}
+
+.journal-entry {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  white-space: pre-wrap; /* Preserve line breaks */
+  margin-top: 20px;
+  transform: skewX(-5deg); /* Slanted text effect */
+}
+
+footer {
+  margin-top: 20px;
+  font-size: 1rem;
+  font-style: italic;
+}
+
+footer p {
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Styling for the slanted text effect */
+.journal-entry p {
+  transform: skewX(-5deg); /* Skew each paragraph */
+  margin: 10px 0;
+}
