@@ -7,14 +7,22 @@ body {
   padding: 0;
 }
 
+/* Container defaults */
 .container {
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
   padding: 50px;
-  text-align: center;
+  text-align: center; /* Homepage default center */
 }
 
+/* Left-align override for journal & AI pages */
+.left-align {
+  text-align: left;
+  padding-left: 30px;
+}
+
+/* Glitchy header */
 h1 {
   font-size: 2.5rem;
   font-weight: bold;
@@ -22,33 +30,12 @@ h1 {
   text-shadow: 0px 0px 5px rgba(255, 0, 0, 0.8), 0px 0px 10px rgba(255, 0, 0, 0.6);
 }
 
-.journal-entry {
-  font-size: 1.2rem;
-  line-height: 1.6;
-  margin-top: 20px;
-}
-
-#argInput {
-  width: 80%;
-  padding: 10px;
-  font-size: 1rem;
-  margin-top: 20px;
-  background-color: #222;
-  border: 1px solid #444;
-  color: #fff;
-  outline: none;
-}
-
-#argInput:focus {
-  border-color: #f5f5f5;
-  background-color: #333;
-}
-
 .glitchy {
   position: relative;
   display: inline-block;
 }
 
+/* Glitch flickers */
 .glitchy:before, .glitchy:after {
   content: attr(data-text);
   position: absolute;
@@ -78,4 +65,44 @@ h1 {
     clip-path: inset(0 0 0 0);
     transform: skew(-0.5deg);
   }
+}
+
+/* Input field */
+#argInput {
+  width: 80%;
+  padding: 10px;
+  font-size: 1rem;
+  margin-top: 20px;
+  background-color: #222;
+  border: 1px solid #444;
+  color: #fff;
+  outline: none;
+}
+
+#argInput:focus {
+  border-color: #f5f5f5;
+  background-color: #333;
+}
+
+/* Journal entries */
+.journal-entry {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  margin-top: 20px;
+  text-align: left;
+  white-space: pre-wrap;
+}
+
+/* Fake AI terminal/code dump */
+.fake-code {
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  background-color: #0a0a0a;
+  color: #00ffcc;
+  padding: 20px;
+  border: 1px solid #222;
+  line-height: 1.5;
+  text-align: left;
+  white-space: pre;
+  overflow-x: auto;
 }
