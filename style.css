@@ -24,6 +24,7 @@ h1 {
   text-shadow: 0px 0px 5px rgba(255, 85, 0, 0.8),
                0px 0px 10px rgba(255, 85, 0, 0.6);
   transition: color 0.2s ease-in-out; /* For flicker animation */
+  display: inline-block;
 }
 
 .journal-entry {
@@ -55,6 +56,7 @@ h1 {
   display: inline-block;
   transition: color 0.2s ease-in-out; /* Flicker transition */
 }
+
 .glitchy:before, .glitchy:after {
   content: attr(data-text);
   position: absolute;
@@ -66,6 +68,7 @@ h1 {
   clip-path: inset(0 0 0 0);
   animation: glitch 2s infinite linear;
 }
+
 .glitchy:after {
   animation-delay: 1s;
 }
