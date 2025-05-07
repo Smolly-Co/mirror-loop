@@ -5,6 +5,23 @@ body {
   color: #f5f5f5;
   margin: 0;
   padding: 0;
+  transition: background-color 0.2s;
+}
+
+/* Morse Code Flicker */
+@keyframes morseFlicker {
+  0%   { background-color: black; }
+  10%  { background-color: white; }
+  20%  { background-color: black; }
+  35%  { background-color: white; }
+  50%  { background-color: black; }
+  65%  { background-color: white; }
+  80%  { background-color: black; }
+  100% { background-color: black; }
+}
+
+.flash-morse {
+  animation: morseFlicker 4s steps(1) forwards;
 }
 
 /* Container defaults */
@@ -13,7 +30,7 @@ body {
   max-width: 800px;
   margin: 0 auto;
   padding: 50px;
-  text-align: center; /* Homepage default center */
+  text-align: center;
 }
 
 /* Left-align override for journal & AI pages */
@@ -53,18 +70,9 @@ h1 {
 }
 
 @keyframes glitch {
-  0% {
-    clip-path: inset(0 0 0 0);
-    transform: skew(-0.5deg);
-  }
-  50% {
-    clip-path: inset(0 10px 0 0);
-    transform: skew(0.5deg);
-  }
-  100% {
-    clip-path: inset(0 0 0 0);
-    transform: skew(-0.5deg);
-  }
+  0%   { clip-path: inset(0 0 0 0); transform: skew(-0.5deg); }
+  50%  { clip-path: inset(0 10px 0 0); transform: skew(0.5deg); }
+  100% { clip-path: inset(0 0 0 0); transform: skew(-0.5deg); }
 }
 
 /* Input field */
@@ -91,6 +99,7 @@ h1 {
   margin-top: 20px;
   text-align: left;
   white-space: pre-wrap;
+  word-break: break-word;
 }
 
 /* Fake AI terminal/code dump */
@@ -103,6 +112,7 @@ h1 {
   border: 1px solid #222;
   line-height: 1.5;
   text-align: left;
-  white-space: pre;
+  white-space: pre-wrap;
+  word-break: break-word;
   overflow-x: auto;
 }
