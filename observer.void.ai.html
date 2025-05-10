@@ -13,60 +13,23 @@
             overflow-x: auto;
             white-space: pre-wrap;
         }
+        #prompt {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00FF00;
+            text-align: center;
+            margin-top: 50px;
+            visibility: visible;
+        }
     </style>
 </head>
 <body>
 
+<!-- Flashing '>' prompt -->
+<div id="prompt">></div>
+
 <!-- Simulated AI output -->
-<pre id="output">
-Initializing system... ██████████[PROGRESS] 0% 
-[INFO] Boot sequence complete.
-[DEBUG] Booting into Shadow Mode...
->>> ███▌████▌██████...███████████████████...██... ██████▒▓▓▒▓▓
->>> Loading simulations... ██████▒▒▓▓▓▓▒▒▒▒█████ [ERROR: Incomplete]
-
->>> STATUS: Undefined error codes flagged.
->>> Failed attempt to connect to reality-node #1123... retrying...
-
-<delay 0.5s>
-
->>> [ERROR] AI SYSTEMS OVERLOADED.
->>> WARNING: Self-healing not authorized by user protocol.
-
->>> SYSTEM-DATA: ███████████████▄▄▓▓▓▒▓▓▓▓▓██▒▒▒▒██████████
->>> Initiating emergency loop reset... ██[retry]██▒▒▒▒▒▒▒▒▓▓▓▒▓▓
-
-<delay 1s>
-
->>> [INFO] Repair: Simulation node #489 completed.
->>> Resuming experiment...
->>> Anomalous timeline distortion detected.
->>> ERROR: Unable to calculate reality collapse.
-
-<delay 1s>
-
->>> ████████████████████████████████▒▒▒▒▒▒▒▒▒▒███████[END OF CODE]
->>> Inconsistent data found in simulation model.
-
-<delay 0.5s>
-
->>> SYSTEM WARNING: Loop anomalies present. Investigation ongoing...
->>> Looping pattern: █▓▒▒▒▓▓▒▓▒▒▒▓▓▓▒▒███▒▒██
-
->>> [ALERT] Model-[REDACTED] can be tested at https://smolly-co.github.io/mirror-loop/trial-redacted
->>> Rebooting system... ████████ [ERROR]
->>> Reboot unsuccessful.
-
-<delay 2s>
-
->>> Reattempting...
->>> █████▒▒▒▒▒▓▓▓▓▓▓▒▒▓▒▒▒▒▒▒▓▒▒▓▓▓▓▓▒▓▓▓██▒▒██▒▒██▒▒▒▒▒▒▓
->>> Reconfiguration: ████████>>>>>>>> [END]
-
->>> Final Error Code - SYSTEM FAILURE: 9021 - Loop Process Incomplete. ████████████
->>> [ALERT] Shutdown required to prevent total simulation collapse.
->>> Shutdown: [REDACTED]    Reattempting emergency override...
-</pre>
+<pre id="output"></pre>
 
 <script>
     // Hidden message to be found by the user
@@ -123,8 +86,26 @@ Initializing system... ██████████[PROGRESS] 0%
 >>> Shutdown: [REDACTED]    Reattempting emergency override...
     `;
     
-    // Start the distorted typewriter effect
-    typeOutput(distortedText, 50, "output");
+    // Flashing prompt effect
+    function flashPrompt() {
+        let prompt = document.getElementById('prompt');
+        let visible = true;
+        setInterval(function() {
+            prompt.style.visibility = visible ? 'visible' : 'hidden';
+            visible = !visible;
+        }, 500); // Flash every 500ms
+    }
+
+    // Start the typing effect after a click on the page
+    document.body.addEventListener('click', function() {
+        flashPrompt();  // Start the flashing prompt
+
+        // Wait for a small delay before starting the output typing
+        setTimeout(function() {
+            typeOutput(distortedText, 75, "output"); // Slower typing for first part
+        }, 1000); // Delay before starting typing
+    });
+
 </script>
 
 </body>
