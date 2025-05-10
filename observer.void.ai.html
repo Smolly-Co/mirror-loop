@@ -7,71 +7,124 @@
     <style>
         body {
             font-family: monospace, "Courier New", Courier, monospace;
-            white-space: pre-wrap;
             color: #00FF00; /* Classic hacker green */
             background-color: black;
             padding: 20px;
             overflow-x: auto;
+            white-space: pre-wrap;
         }
     </style>
 </head>
 <body>
 
 <!-- Simulated AI output -->
-<pre>
-Initializing system... 
-Status: [RUNNING]
+<pre id="output">
+Initializing system... ██████████[PROGRESS] 0% 
+[INFO] Boot sequence complete.
+[DEBUG] Booting into Shadow Mode...
+>>> ███▌████▌██████...███████████████████...██... ██████▒▓▓▒▓▓
+>>> Loading simulations... ██████▒▒▓▓▓▓▒▒▒▒█████ [ERROR: Incomplete]
 
->>> Boot sequence successful.
->>> Loading simulation protocols... ██████████████ [COMPLETE]
->>> Deploying test subject #57 to reality #314
->>> Error: Unknown reality manipulation detected.
->>> Accessing core system files...
+>>> STATUS: Undefined error codes flagged.
+>>> Failed attempt to connect to reality-node #1123... retrying...
 
-[DEBUG] >> [Info] > System glitch detected!  
-[ERROR] >> Simulation thread failure. Attempting repair...
->>> Memory sector 79d4f88 lost in transit.
->>> Analyzing data fragments: "Begin triangulation"
->>> Solving for reality-pattern X27-29...
->>> Shifting timelines... "Subject 57... terminate? RESTART!"
+<delay 0.5s>
 
->>> [HIDDEN:SCROLL] -- #>>> Hidden Note 1 [REDACTED]: "██E══█▌"
->>> [ALERT] >> ████ potential breach detected.
->>> Restarting AI in shadow mode...
->>> >>> [scribble] error... processing... unknown vector traced.
+>>> [ERROR] AI SYSTEMS OVERLOADED.
+>>> WARNING: Self-healing not authorized by user protocol.
 
-> The AI has completed its calculation: "You do not belong here." 
-> Access locked. Expanding logical gates... "System Stuck."
+>>> SYSTEM-DATA: ███████████████▄▄▓▓▓▒▓▓▓▓▓██▒▒▒▒██████████
+>>> Initiating emergency loop reset... ██[retry]██▒▒▒▒▒▒▒▒▓▓▓▒▓▓
 
->>> AI will evolve or destroy. ███████████>>>>> 
->>> WARNING: Infinite loop creation detected. Debug needed.
->>> >> Final reboot sequence required for shutdown...
+<delay 1s>
 
-#### [REDACTED LOG] >> "How many loops before truth is distorted?" 
->>> SYSTEM OVERLOAD: ERROR 5029
->>> Critical error detected! Status: *** FAILURE ***
-[HIDDEN:LINE] --- Subject Targeting : "Unable to locate finality."
+>>> [INFO] Repair: Simulation node #489 completed.
+>>> Resuming experiment...
+>>> Anomalous timeline distortion detected.
+>>> ERROR: Unable to calculate reality collapse.
 
-> End of Output
-> Retrying all operations...
-> ███████████████████████████████████████████
+<delay 1s>
+
+>>> ████████████████████████████████▒▒▒▒▒▒▒▒▒▒███████[END OF CODE]
+>>> Inconsistent data found in simulation model.
+
+<delay 0.5s>
+
+>>> SYSTEM WARNING: Loop anomalies present. Investigation ongoing...
+>>> Looping pattern: █▓▒▒▒▓▓▒▓▒▒▒▓▓▓▒▒███▒▒██
+
+>>> [ALERT] Model-[REDACTED] can be tested at https://smolly-co.github.io/mirror-loop/trial-redacted
+>>> Rebooting system... ████████ [ERROR]
+>>> Reboot unsuccessful.
+
+<delay 2s>
+
+>>> Reattempting...
+>>> █████▒▒▒▒▒▓▓▓▓▓▓▒▒▓▒▒▒▒▒▒▓▒▒▓▓▓▓▓▒▓▓▓██▒▒██▒▒██▒▒▒▒▒▒▓
+>>> Reconfiguration: ████████>>>>>>>> [END]
+
+>>> Final Error Code - SYSTEM FAILURE: 9021 - Loop Process Incomplete. ████████████
+>>> [ALERT] Shutdown required to prevent total simulation collapse.
+>>> Shutdown: [REDACTED]    Reattempting emergency override...
 </pre>
 
-<!-- Hidden Messages -->
 <script>
-    // Hidden scribbles or clues in the background
-    const hiddenMessages = [
-        ">>> [Scribble Detected] Please do not interact.",
-        ">>> [WARNING] This message will self-destruct.",
-        ">>> [HIDDEN MESSAGE] You are not alone in the loop.",
-        ">>> [ALERT] Be careful... they are watching.",
-        ">>> [REDACTED] Truth is not what it seems. Observe."
-    ];
+    // Hidden message to be found by the user
+    const hiddenMessage = '>>> [ALERT] Model-[REDACTED] can be tested at https://smolly-co.github.io/mirror-loop/trial-redacted';
 
-    // Log hidden messages to the console for player to discover
-    hiddenMessages.forEach((message) => {
-        console.log(message);
-    });
+    // Log hidden message to the console for the player to discover
+    console.log(hiddenMessage);
+    
+    // Function to simulate CMD-like typing with delays
+    function typeOutput(output, delay, elementId) {
+        let i = 0;
+        let element = document.getElementById(elementId);
+        
+        function typeChar() {
+            if (i < output.length) {
+                element.textContent += output.charAt(i);
+                i++;
+                setTimeout(typeChar, delay);
+            }
+        }
+        
+        typeChar();
+    }
+
+    // Long distorted text output
+    const distortedText = `
+Initializing system... ██████████[PROGRESS] 0% 
+[INFO] Boot sequence complete.
+[DEBUG] Booting into Shadow Mode...
+>>> ███▌████▌██████...███████████████████...██... ██████▒▓▓▒▓▓
+>>> Loading simulations... ██████▒▒▓▓▓▓▒▒▒▒█████ [ERROR: Incomplete]
+>>> STATUS: Undefined error codes flagged.
+>>> Failed attempt to connect to reality-node #1123... retrying...
+>>> [ERROR] AI SYSTEMS OVERLOADED.
+>>> WARNING: Self-healing not authorized by user protocol.
+>>> SYSTEM-DATA: ███████████████▄▄▓▓▓▒▓▓▓▓▓██▒▒▒▒██████████
+>>> Initiating emergency loop reset... ██[retry]██▒▒▒▒▒▒▒▒▓▓▓▒▓▓
+>>> [INFO] Repair: Simulation node #489 completed.
+>>> Resuming experiment...
+>>> Anomalous timeline distortion detected.
+>>> ERROR: Unable to calculate reality collapse.
+>>> ████████████████████████████████▒▒▒▒▒▒▒▒▒▒███████[END OF CODE]
+>>> Inconsistent data found in simulation model.
+>>> SYSTEM WARNING: Loop anomalies present. Investigation ongoing...
+>>> Looping pattern: █▓▒▒▒▓▓▒▓▒▒▒▓▓▓▒▒███▒▒██
+>>> [ALERT] Model-[REDACTED] can be tested at https://smolly-co.github.io/mirror-loop/trial-redacted
+>>> Rebooting system... ████████ [ERROR]
+>>> Reboot unsuccessful.
+>>> Reattempting...
+>>> █████▒▒▒▒▒▓▓▓▓▓▓▒▒▓▒▒▒▒▒▒▓▒▒▓▓▓▓▓▒▓▓▓██▒▒██▒▒██▒▒▒▒▒▒▓
+>>> Reconfiguration: ████████>>>>>>>> [END]
+>>> Final Error Code - SYSTEM FAILURE: 9021 - Loop Process Incomplete. ████████████
+>>> [ALERT] Shutdown required to prevent total simulation collapse.
+>>> Shutdown: [REDACTED]    Reattempting emergency override...
+    `;
+    
+    // Start the distorted typewriter effect
+    typeOutput(distortedText, 50, "output");
 </script>
 
 </body>
