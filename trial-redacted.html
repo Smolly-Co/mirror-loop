@@ -91,6 +91,12 @@
         opacity: 0;
       }
     }
+
+    /* Hide the scrollbar but keep it functional */
+    #output::-webkit-scrollbar {
+      width: 0px;
+      height: 0px;
+    }
   </style>
 </head>
 <body>
@@ -144,7 +150,16 @@
       isTyping = true; // Typing is in progress
       output.textContent += `\n>>> ${input}\n`;
 
-      if (input.toLowerCase() === "cmd") {
+      // Easter Egg Commands
+      if (input.toLowerCase() === "hello" || input.toLowerCase() === "hello?") {
+        typeOut("INTENDED ENTRY POINT IDENTIFIED. WELCOME BACK V-[REDACTED]");
+      } else if (input.toLowerCase() === "shutdown") {
+        typeOut("[WARNING] Shutdown terminates V-[REDACTED] human lifeforms. Press c to confirm.");
+      } else if (input.toLowerCase() === "c") {
+        // Simulate user's public IP for fun
+        const fakeIP = `192.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
+        typeOut(`[ERROR] Attempted breech of 'Entity Awareness Violation' '${fakeIP}' forwarded to [REDACTED]`);
+      } else if (input.toLowerCase() === "cmd") {
         typeOut("Available Commands: placeholder");
       } else {
         typeOut("[ERROR] Command not recognised.");
