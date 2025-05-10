@@ -7,12 +7,12 @@
   <style>
     body {
       margin: 0;
-      padding: 20px;
-      font-family: monospace;
+      padding: 10px 20px;
+      font-family: 'Courier New', monospace;
       background-color: black;
       color: white;
       font-weight: bold;
-      font-size: 14px;
+      font-size: 12px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -24,29 +24,31 @@
       white-space: pre-wrap;
       overflow-y: auto;
       flex-grow: 1;
-      margin-bottom: 10px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 3px #fff2;
+      animation: flicker 0.15s infinite alternate;
     }
 
     #input-area {
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 100%;
+      padding-bottom: 20px;
     }
 
     #command {
       width: 60%;
       max-width: 500px;
-      padding: 10px;
-      font-size: 14px;
-      font-family: monospace;
+      padding: 8px;
+      font-size: 12px;
+      font-family: 'Courier New', monospace;
       background-color: #111;
       color: white;
       border: 1px solid #555;
     }
 
     #send-btn {
-      padding: 10px 15px;
+      padding: 8px 12px;
       margin-left: 10px;
       background-color: #222;
       color: white;
@@ -57,11 +59,16 @@
     #send-btn:hover {
       background-color: #333;
     }
+
+    @keyframes flicker {
+      0%   { opacity: 1; }
+      100% { opacity: 0.95; }
+    }
   </style>
 </head>
 <body>
 
-  <div id="output">>>> Console active. Type 'cmd' to list available commands.</div>
+  <div id="output"></div>
 
   <div id="input-area">
     <input type="text" id="command" autocomplete="off" placeholder="execute function..." />
@@ -73,19 +80,38 @@
     const commandInput = document.getElementById("command");
     const sendBtn = document.getElementById("send-btn");
 
-    function runCommand() {
-      const input = commandInput.value.trim();
-      let response = "";
+    const delayPerWord = 200;
 
-      if (input.toLowerCase() === "cmd") {
-        response = ">>> Available Commands:\nplaceholder";
-      } else if (input === "") {
-        return;
-      } else {
-        response = "[ERROR] Command not recognised.";
+    function typeOut(text) {
+      const words = text.split(" ");
+      let i = 0;
+
+      function addNextWord() {
+        if (i < words.length) {
+          output.textContent += words[i] + " ";
+          i++;
+          output.scrollTop = output.scrollHeight;
+          setTimeout(addNextWord, delayPerWord);
+        } else {
+          output.textContent += "\n";
+        }
       }
 
-      output.textContent += `\n>>> ${input}\n${response}`;
+      addNextWord();
+    }
+
+    function runCommand() {
+      const input = commandInput.value.trim();
+      if (input === "") return;
+
+      output.textContent += `\n>>> ${input}\n`;
+
+      if (input.toLowerCase() === "cmd") {
+        typeOut("Available Commands: placeholder");
+      } else {
+        typeOut("[ERROR] Command not recognised.");
+      }
+
       commandInput.value = "";
       output.scrollTop = output.scrollHeight;
     }
