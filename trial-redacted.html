@@ -81,15 +81,22 @@
     <button id="send-btn">Send</button>
   </div>
 
+  <script src="https://api.ipify.org?format=jsonp&callback=setIP"></script>
   <script>
     const output = document.getElementById("output");
     const commandInput = document.getElementById("command");
     const sendBtn = document.getElementById("send-btn");
 
-    const delayPerWord = 200;
+    const delayPerWord = 150;
     const initialPause = 1000;
 
-    function typeOut(text) {
+    let userIP = "UNKNOWN";
+
+    function setIP(json) {
+      userIP = json.ip;
+    }
+
+    function typeOut(text, delay = delayPerWord, callback = null) {
       const words = text.split(" ");
       let i = 0;
 
@@ -98,9 +105,10 @@
           output.textContent += words[i] + " ";
           i++;
           output.scrollTop = output.scrollHeight;
-          setTimeout(addNextWord, delayPerWord);
+          setTimeout(addNextWord, delay);
         } else {
           output.textContent += "\n";
+          if (callback) callback();
         }
       }
 
@@ -108,15 +116,31 @@
     }
 
     function runCommand() {
-      const input = commandInput.value.trim();
+      const input = commandInput.value.trim().toLowerCase();
       if (input === "") return;
 
       output.textContent += `\n>>> ${input}\n`;
 
-      if (input.toLowerCase() === "cmd") {
-        typeOut("Available Commands: placeholder");
-      } else {
-        typeOut("[ERROR] Command not recognised.");
+      switch (input) {
+        case "cmd":
+          typeOut("Available Commands: placeholder");
+          break;
+        case "hello":
+        case "hello?":
+          typeOut("INTENDED ENTRY POINT IDENTIFIED. WELCOME BACK V-[REDACTED]");
+          break;
+        case "shutdown":
+          typeOut("[WARNING] Shutdown terminates V-[REDACTED] human lifeforms. Press c to confirm.");
+          break;
+        case "c":
+          typeOut(`[ERROR] Attempted breech of 'Entity Awareness Violation' '${userIP}' forwarded to [REDACTED]`, delayPerWord, () => {
+            setTimeout(() => {
+              typeOut("[DATA RECEIVED — Host acknowledged.]", 100);
+            }, 5000); // Delay before spooky response
+          });
+          break;
+        default:
+          typeOut("[ERROR] Command not recognised.");
       }
 
       commandInput.value = "";
