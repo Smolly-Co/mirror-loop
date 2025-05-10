@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smolly-Co Trial Console</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: monospace;
+      background-color: black;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    #output {
+      white-space: pre-wrap;
+      overflow-y: auto;
+      flex-grow: 1;
+      margin-bottom: 10px;
+    }
+
+    #input-area {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    #command {
+      width: 60%;
+      max-width: 500px;
+      padding: 10px;
+      font-size: 14px;
+      font-family: monospace;
+      background-color: #111;
+      color: white;
+      border: 1px solid #555;
+    }
+
+    #send-btn {
+      padding: 10px 15px;
+      margin-left: 10px;
+      background-color: #222;
+      color: white;
+      border: 1px solid #555;
+      cursor: pointer;
+    }
+
+    #send-btn:hover {
+      background-color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="output">>>> Console active. Type 'cmd' to list available commands.</div>
+
+  <div id="input-area">
+    <input type="text" id="command" autocomplete="off" placeholder="execute function..." />
+    <button id="send-btn">Send</button>
+  </div>
+
+  <script>
+    const output = document.getElementById("output");
+    const commandInput = document.getElementById("command");
+    const sendBtn = document.getElementById("send-btn");
+
+    function runCommand() {
+      const input = commandInput.value.trim();
+      let response = "";
+
+      if (input.toLowerCase() === "cmd") {
+        response = ">>> Available Commands:\nplaceholder";
+      } else if (input === "") {
+        return;
+      } else {
+        response = "[ERROR] Command not recognised.";
+      }
+
+      output.textContent += `\n>>> ${input}\n${response}`;
+      commandInput.value = "";
+      output.scrollTop = output.scrollHeight;
+    }
+
+    sendBtn.addEventListener("click", runCommand);
+    commandInput.addEventListener("keypress", function (e) {
+      if (e.key === "Enter") {
+        runCommand();
+      }
+    });
+  </script>
+</body>
+</html>
