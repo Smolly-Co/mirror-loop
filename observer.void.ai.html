@@ -12,6 +12,8 @@
             padding: 20px;
             overflow-x: auto;
             white-space: pre-wrap;
+            word-wrap: break-word; /* Ensure long lines don't overflow */
+            overflow-wrap: break-word; /* For better mobile compatibility */
         }
     </style>
 </head>
@@ -36,7 +38,7 @@
             if (i < output.length) {
                 element.textContent += output.charAt(i);
                 i++;
-                setTimeout(typeChar, delay);
+                setTimeout(typeChar, delay); // Control the speed of typing here
             }
         }
         
@@ -75,7 +77,7 @@ Initializing system... ██████████[PROGRESS] 0%
 >>> Shutdown: [REDACTED]    Reattempting emergency override...
     `;
     
-    // Start the typing effect right away
+    // Start the typing effect right away with a faster typing speed (25ms)
     typeOutput(distortedText, 25, "output"); // Faster typing speed (25ms)
 
 </script>
