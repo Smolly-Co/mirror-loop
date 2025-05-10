@@ -12,7 +12,7 @@
       background-color: black;
       color: white;
       font-weight: bold;
-      font-size: 12px;
+      font-size: 10px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -25,22 +25,22 @@
       overflow-y: auto;
       flex-grow: 1;
       margin-bottom: 20px;
-      text-shadow: 0 0 3px #fff2;
-      animation: flicker 0.15s infinite alternate;
+      text-shadow: 0 0 2px #fff3;
+      animation: flicker 0.25s infinite alternate;
     }
 
     #input-area {
       display: flex;
       justify-content: center;
       align-items: center;
-      padding-bottom: 20px;
+      padding-bottom: 25px;
     }
 
     #command {
       width: 60%;
       max-width: 500px;
-      padding: 8px;
-      font-size: 12px;
+      padding: 6px;
+      font-size: 10px;
       font-family: 'Courier New', monospace;
       background-color: #111;
       color: white;
@@ -48,10 +48,12 @@
     }
 
     #send-btn {
-      padding: 8px 12px;
+      padding: 6px 10px;
       margin-left: 10px;
       background-color: #222;
       color: white;
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
       border: 1px solid #555;
       cursor: pointer;
     }
@@ -61,8 +63,12 @@
     }
 
     @keyframes flicker {
-      0%   { opacity: 1; }
-      100% { opacity: 0.95; }
+      0%, 19%, 21%, 99% {
+        opacity: 1;
+      }
+      20%, 100% {
+        opacity: 0;
+      }
     }
   </style>
 </head>
@@ -81,6 +87,7 @@
     const sendBtn = document.getElementById("send-btn");
 
     const delayPerWord = 200;
+    const initialPause = 1000;
 
     function typeOut(text) {
       const words = text.split(" ");
@@ -97,7 +104,7 @@
         }
       }
 
-      addNextWord();
+      setTimeout(addNextWord, initialPause);
     }
 
     function runCommand() {
