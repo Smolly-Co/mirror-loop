@@ -29,6 +29,11 @@
       animation: flicker 0.25s infinite alternate;
     }
 
+    /* Hide scrollbar */
+    #output::-webkit-scrollbar {
+      display: none;
+    }
+
     #input-area {
       display: flex;
       justify-content: center;
@@ -98,6 +103,8 @@
 
     userIP = generateRandomIP();
 
+    let typingInProgress = false;  // Flag to track typing state
+
     function typeOut(text, delay = delayPerWord, callback = null) {
       const words = text.split(" ");
       let i = 0;
@@ -119,7 +126,9 @@
 
     function runCommand() {
       const input = commandInput.value.trim().toLowerCase();
-      if (input === "") return;
+      if (input === "" || typingInProgress) return;
+
+      typingInProgress = true; // Block new input while typing
 
       output.textContent += `\n>>> ${input}\n`;
 
@@ -147,6 +156,9 @@
 
       commandInput.value = "";
       output.scrollTop = output.scrollHeight;
+
+      // Re-enable input after typing is finished
+      typingInProgress = false;
     }
 
     sendBtn.addEventListener("click", runCommand);
