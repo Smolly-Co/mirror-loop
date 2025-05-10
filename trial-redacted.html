@@ -91,15 +91,12 @@
 
     let userIP = "UNKNOWN";
 
-    // Get IP address using fetch instead of jsonp
-    fetch("https://api.ipify.org?format=json")
-      .then(res => res.json())
-      .then(data => {
-        userIP = data.ip;
-      })
-      .catch(() => {
-        userIP = "OFFLINE";
-      });
+    // Generate random IP starting with 192.
+    function generateRandomIP() {
+      return `192.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}`;
+    }
+
+    userIP = generateRandomIP();
 
     function typeOut(text, delay = delayPerWord, callback = null) {
       const words = text.split(" ");
