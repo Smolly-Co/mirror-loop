@@ -7,29 +7,20 @@
     <style>
         body {
             font-family: monospace, "Courier New", Courier, monospace;
-            color: #00FF00; /* Classic hacker green */
+            color: #00FF00;
             background-color: black;
             padding: 20px;
             overflow-x: auto;
             white-space: pre-wrap;
-            word-wrap: break-word; /* Ensure long lines don't overflow */
-            overflow-wrap: break-word; /* For better mobile compatibility */
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
 
-<!-- Simulated AI output -->
 <pre id="output"></pre>
 
 <script>
-    // Hidden message to be found by the user
-    const hiddenMessage = '>>> [ALERT] Model-[REDACTED] can be tested at https://smolly-co.github.io/mirror-loop/trial-redacted';
-
-    // Log hidden message to the console for the player to discover
-    console.log(hiddenMessage);
-    
-    // Function to simulate CMD-like typing with delays
     function typeOutput(output, delay, elementId) {
         let i = 0;
         let element = document.getElementById(elementId);
@@ -38,14 +29,13 @@
             if (i < output.length) {
                 element.textContent += output.charAt(i);
                 i++;
-                setTimeout(typeChar, delay); // Control the speed of typing here
+                setTimeout(typeChar, delay);
             }
         }
         
         typeChar();
     }
 
-    // Long distorted text output
     const distortedText = `
 Initializing system... ██████████[PROGRESS] 0% 
 [INFO] Boot sequence complete.
@@ -77,9 +67,7 @@ Initializing system... ██████████[PROGRESS] 0%
 >>> Shutdown: [REDACTED]    Reattempting emergency override...
     `;
     
-    // Start the typing effect right away with a faster typing speed
-    typeOutput(distortedText, 5, "output"); // Faster typing speed
-
+    typeOutput(distortedText, 10, "output");
 </script>
 
 </body>
