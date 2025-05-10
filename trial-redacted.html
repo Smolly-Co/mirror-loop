@@ -81,7 +81,6 @@
     <button id="send-btn">Send</button>
   </div>
 
-  <script src="https://api.ipify.org?format=jsonp&callback=setIP"></script>
   <script>
     const output = document.getElementById("output");
     const commandInput = document.getElementById("command");
@@ -92,9 +91,15 @@
 
     let userIP = "UNKNOWN";
 
-    function setIP(json) {
-      userIP = json.ip;
-    }
+    // Get IP address using fetch instead of jsonp
+    fetch("https://api.ipify.org?format=json")
+      .then(res => res.json())
+      .then(data => {
+        userIP = data.ip;
+      })
+      .catch(() => {
+        userIP = "OFFLINE";
+      });
 
     function typeOut(text, delay = delayPerWord, callback = null) {
       const words = text.split(" ");
@@ -136,7 +141,7 @@
           typeOut(`[ERROR] Attempted breech of 'Entity Awareness Violation' '${userIP}' forwarded to [REDACTED]`, delayPerWord, () => {
             setTimeout(() => {
               typeOut("[DATA RECEIVED — Host acknowledged.]", 100);
-            }, 5000); // Delay before spooky response
+            }, 5000);
           });
           break;
         default:
