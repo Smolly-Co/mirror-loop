@@ -179,11 +179,12 @@
       output.scrollTop = output.scrollHeight;
 
       // Re-enable input after typing is finished
+      const responseDelay = initialPause + (input.split(" ").length * delayPerWord) + 500;
       setTimeout(() => {
         typingInProgress = false;
         commandInput.disabled = false; // Re-enable input
         sendBtn.disabled = false; // Re-enable button
-      }, initialPause + (text.split(" ").length * delayPerWord) + 500);
+      }, responseDelay);
     }
 
     sendBtn.addEventListener("click", runCommand);
