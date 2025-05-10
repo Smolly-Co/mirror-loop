@@ -37,8 +37,24 @@
       position: relative;
     }
 
+    /* Spacer for PC */
     #input-spacer {
       height: 20px; /* Adjust this value to raise the input box */
+    }
+
+    /* Ensures the input box and button look good on mobile */
+    @media (max-width: 600px) {
+      #input-area {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      #command {
+        width: 100%;
+        margin-bottom: 5px;
+      }
+      #send-btn {
+        width: 100%;
+      }
     }
 
     #command {
@@ -97,6 +113,8 @@
     const delayPerWord = 200;
     const initialPause = 1000;
 
+    let isTyping = false; // To track if typing is in progress
+
     function typeOut(text) {
       const words = text.split(" ");
       let i = 0;
@@ -109,6 +127,7 @@
           setTimeout(addNextWord, delayPerWord);
         } else {
           output.textContent += "\n";
+          isTyping = false; // Finished typing
         }
       }
 
@@ -119,6 +138,10 @@
       const input = commandInput.value.trim();
       if (input === "") return;
 
+      // Prevent typing if already typing
+      if (isTyping) return;
+
+      isTyping = true; // Typing is in progress
       output.textContent += `\n>>> ${input}\n`;
 
       if (input.toLowerCase() === "cmd") {
