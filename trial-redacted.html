@@ -67,6 +67,24 @@
       background-color: #333;
     }
 
+    /* Make sure the layout works well on mobile */
+    @media (max-width: 600px) {
+      #input-area {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      #command {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      #send-btn {
+        width: 100%;
+        margin-left: 0;
+      }
+    }
+
     @keyframes flicker {
       0%, 19%, 21%, 99% {
         opacity: 1;
