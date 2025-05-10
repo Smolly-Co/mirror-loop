@@ -13,20 +13,9 @@
             overflow-x: auto;
             white-space: pre-wrap;
         }
-        #prompt {
-            font-size: 24px;
-            font-weight: bold;
-            color: #00FF00;
-            text-align: center;
-            margin-top: 50px;
-            visibility: visible;
-        }
     </style>
 </head>
 <body>
-
-<!-- Flashing '>' prompt -->
-<div id="prompt">></div>
 
 <!-- Simulated AI output -->
 <pre id="output"></pre>
@@ -86,25 +75,8 @@ Initializing system... ██████████[PROGRESS] 0%
 >>> Shutdown: [REDACTED]    Reattempting emergency override...
     `;
     
-    // Flashing prompt effect
-    function flashPrompt() {
-        let prompt = document.getElementById('prompt');
-        let visible = true;
-        setInterval(function() {
-            prompt.style.visibility = visible ? 'visible' : 'hidden';
-            visible = !visible;
-        }, 500); // Flash every 500ms
-    }
-
-    // Start the typing effect after a click on the page
-    document.body.addEventListener('click', function() {
-        flashPrompt();  // Start the flashing prompt
-
-        // Wait for a small delay before starting the output typing
-        setTimeout(function() {
-            typeOutput(distortedText, 75, "output"); // Slower typing for first part
-        }, 1000); // Delay before starting typing
-    });
+    // Start the typing effect right away
+    typeOutput(distortedText, 50, "output"); // Slightly faster typing speed
 
 </script>
 
