@@ -25,12 +25,6 @@
             align-items: center;
             background-color: #111;
         }
-        #right .prediction {
-            font-family: 'Courier New', monospace;
-            font-size: 20px;
-            color: white;
-            text-align: center;
-        }
         canvas {
             display: block;
             margin: 0 auto;
@@ -43,29 +37,30 @@
     <canvas id="pongCanvas"></canvas>
 </div>
 <div id="right">
-    <div class="prediction">
-        <h2>Prediction (3 seconds ahead):</h2>
-        <div id="prediction"></div>
-    </div>
+    <canvas id="predictionCanvas"></canvas>
 </div>
 
 <script>
     const pongCanvas = document.getElementById('pongCanvas');
+    const predictionCanvas = document.getElementById('predictionCanvas');
     const ctx = pongCanvas.getContext('2d');
-    const predictionElement = document.getElementById('prediction');
+    const predCtx = predictionCanvas.getContext('2d');
+
     pongCanvas.width = 600;
     pongCanvas.height = 400;
+    predictionCanvas.width = 600;
+    predictionCanvas.height = 400;
 
     let ballX = pongCanvas.width / 2;
     let ballY = pongCanvas.height / 2;
-    let ballSpeedX = 5;
-    let ballSpeedY = 5;
+    let ballSpeedX = 4;  // Slower ball speed
+    let ballSpeedY = 4;  // Slower ball speed
     const paddleWidth = 10;
     const paddleHeight = 100;
     let playerY = pongCanvas.height / 2 - paddleHeight / 2;
     let aiY = pongCanvas.height / 2 - paddleHeight / 2;
-    const playerSpeed = 30;
-    const aiSpeed = 3;
+    const playerSpeed = 4;  // Slower player speed
+    const aiSpeed = 2;  // Slower AI speed
     let playerScore = 0;
     let aiScore = 0;
     let gameStarted = false;
@@ -136,10 +131,9 @@
         ctx.fillRect(0, playerY, paddleWidth, paddleHeight);  // Player paddle
         ctx.fillRect(pongCanvas.width - paddleWidth, aiY, paddleWidth, paddleHeight);  // AI paddle
 
-        // Draw ball
-        ctx.beginPath();
-        ctx.arc(ballX, ballY, 10, 0, Math.PI * 2);
-        ctx.fill();
+        // Draw square ball
+        ctx.fillStyle = 'white';
+        ctx.fillRect(ballX, ballY, 15, 15);  // Square ball (15x15 px)
 
         // Draw score
         ctx.font = '30px Courier New';
@@ -149,27 +143,38 @@
 
     // Predict where ball, paddles, and score will be in 3 seconds
     function predictFuture() {
+        predCtx.clearRect(0, 0, predictionCanvas.width, predictionCanvas.height);
+
+        // Predict the future ball position (simulate 3 seconds of movement)
         let predictedBallX = ballX + ballSpeedX * 3;
         let predictedBallY = ballY + ballSpeedY * 3;
-        let predictedPlayerY = playerY;
-        let predictedAiY = aiY;
 
-        if (predictedBallY <= 0 || predictedBallY >= pongCanvas.height) predictedBallY = ballY;
-        if (predictedPlayerY <= 0) predictedPlayerY = 0;
-        if (predictedAiY <= 0) predictedAiY = 0;
+        // Predict the future player and AI paddle positions
+        let predictedPlayerY = playerY + playerSpeed * 3 * (upPressed ? -1 : 1);
+        let predictedAiY = aiY + aiSpeed * 3 * (ballY > aiY + paddleHeight / 2 ? 1 : -1);
 
-        // Predict score changes (for simplicity, assume ball goes straight)
+        // Ensure paddles and ball stay within bounds
+        predictedPlayerY = Math.max(0, Math.min(predictedPlayerY, pongCanvas.height - paddleHeight));
+        predictedAiY = Math.max(0, Math.min(predictedAiY, pongCanvas.height - paddleHeight));
+
+        // Draw predicted ball (visual prediction)
+        predCtx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        predCtx.fillRect(predictedBallX, predictedBallY, 15, 15);  // Predicted square ball (15x15 px)
+
+        // Draw predicted player and AI paddles (visual prediction)
+        predCtx.fillRect(0, predictedPlayerY, paddleWidth, paddleHeight);  // Predicted player paddle
+        predCtx.fillRect(predictionCanvas.width - paddleWidth, predictedAiY, paddleWidth, paddleHeight);  // Predicted AI paddle
+
+        // Predict score changes visually
         let predictedPlayerScore = playerScore;
         let predictedAiScore = aiScore;
         if (predictedBallX <= 0) predictedAiScore++;
         if (predictedBallX >= pongCanvas.width) predictedPlayerScore++;
 
-        predictionElement.innerHTML = `
-            Ball Position: (${Math.round(predictedBallX)}, ${Math.round(predictedBallY)})<br>
-            Player Paddle: ${Math.round(predictedPlayerY)}<br>
-            AI Paddle: ${Math.round(predictedAiY)}<br>
-            Predicted Score: Player ${predictedPlayerScore} - AI ${predictedAiScore}
-        `;
+        // Display the predicted score (visually)
+        predCtx.font = '30px Courier New';
+        predCtx.fillText(predictedPlayerScore, predictionCanvas.width / 4, 50);
+        predCtx.fillText(predictedAiScore, predictionCanvas.width - predictionCanvas.width / 4, 50);
     }
 
     // Handle paddle controls
@@ -188,7 +193,7 @@
         ballX = pongCanvas.width / 2;
         ballY = pongCanvas.height / 2;
         ballSpeedX = -ballSpeedX;
-        ballSpeedY = 5 * (Math.random() < 0.5 ? 1 : -1);
+        ballSpeedY = 4 * (Math.random() < 0.5 ? 1 : -1);
     }
 </script>
 </body>
