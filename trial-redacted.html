@@ -7,19 +7,17 @@
   <style>
     body {
       margin: 0;
-      padding: 0;
+      padding: 10px 20px;
+      font-family: 'Courier New', monospace;
       background-color: black;
+      color: white;
+      font-weight: bold;
+      font-size: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100vh;
       overflow: hidden;
-    }
-
-    #zoom-wrapper {
-      transform-origin: top left;
-    }
-
-    @media (min-width: 768px) {
-      #zoom-wrapper {
-        transform: scale(1.75);
-      }
     }
 
     #clock {
@@ -83,28 +81,27 @@
       height: 0;
     }
 
-    #zoom-wrapper {
-      font-family: 'Courier New', monospace;
-      color: white;
-      font-weight: bold;
-      font-size: 10px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      height: 100vh;
-      padding: 10px 20px;
-      box-sizing: border-box;
+    /* 🎉 FONT SIZE BOOST FOR DESKTOPS */
+    @media (min-width: 768px) {
+      body {
+        font-size: 17.5px;
+      }
+
+      #clock,
+      #command,
+      #send-btn {
+        font-size: 17.5px;
+      }
     }
   </style>
 </head>
 <body>
-  <div id="zoom-wrapper">
-    <div id="clock">00:00:00:000</div>
-    <div id="output"></div>
-    <div id="input-area">
-      <input type="text" id="command" autocomplete="off" placeholder="execute function..." />
-      <button id="send-btn">Send</button>
-    </div>
+
+  <div id="clock">00:00:00:000</div>
+  <div id="output"></div>
+  <div id="input-area">
+    <input type="text" id="command" autocomplete="off" placeholder="execute function..." />
+    <button id="send-btn">Send</button>
   </div>
 
   <script>
