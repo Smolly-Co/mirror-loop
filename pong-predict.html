@@ -87,16 +87,17 @@
     }
 
     function updateGame() {
+        // Ball movement before collision detection
         ballX += ballSpeedX;
         ballY += ballSpeedY;
 
         // Ball bounce off top/bottom walls
         if (ballY <= 0 || ballY >= pongCanvas.height) ballSpeedY = -ballSpeedY;
 
-        // Ball bounce off paddles
+        // Ball bounce off paddles (adjust this part)
         if (ballX <= paddleWidth && ballY > playerY && ballY < playerY + paddleHeight) {
             ballSpeedX = -ballSpeedX;
-            randomizeBallAngle(); // Randomize angle after hitting paddle
+            randomizeBallAngle(); // Randomize angle after hitting player paddle
         }
 
         if (ballX >= pongCanvas.width - paddleWidth && ballY > aiY && ballY < aiY + paddleHeight) {
