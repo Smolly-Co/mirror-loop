@@ -7,17 +7,19 @@
   <style>
     body {
       margin: 0;
-      padding: 10px 20px;
-      font-family: 'Courier New', monospace;
+      padding: 0;
       background-color: black;
-      color: white;
-      font-weight: bold;
-      font-size: 10px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      height: 100vh;
       overflow: hidden;
+    }
+
+    #zoom-wrapper {
+      transform-origin: top left;
+    }
+
+    @media (min-width: 768px) {
+      #zoom-wrapper {
+        transform: scale(1.75);
+      }
     }
 
     #clock {
@@ -80,15 +82,29 @@
       width: 0;
       height: 0;
     }
+
+    #zoom-wrapper {
+      font-family: 'Courier New', monospace;
+      color: white;
+      font-weight: bold;
+      font-size: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100vh;
+      padding: 10px 20px;
+      box-sizing: border-box;
+    }
   </style>
 </head>
 <body>
-
-  <div id="clock">00:00:00:000</div>
-  <div id="output"></div>
-  <div id="input-area">
-    <input type="text" id="command" autocomplete="off" placeholder="execute function..." />
-    <button id="send-btn">Send</button>
+  <div id="zoom-wrapper">
+    <div id="clock">00:00:00:000</div>
+    <div id="output"></div>
+    <div id="input-area">
+      <input type="text" id="command" autocomplete="off" placeholder="execute function..." />
+      <button id="send-btn">Send</button>
+    </div>
   </div>
 
   <script>
@@ -103,12 +119,10 @@
 
     const knownFiles = ["log-12-7-97-fire-report"];
 
-    // Always return fake IP
     function fakeIP() {
       return "192.placeholder.placeholder.placeholder";
     }
 
-    // Laggy clock stutter ✨
     let realTime = Date.now();
     function updateClock() {
       const now = Date.now();
