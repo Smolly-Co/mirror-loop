@@ -20,6 +20,14 @@
       overflow: hidden;
     }
 
+    #clock {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 10px;
+      color: #888;
+    }
+
     #output {
       white-space: pre-wrap;
       overflow-y: auto;
@@ -33,28 +41,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding-bottom: 25px;
+      padding-bottom: 40px;
       position: relative;
-    }
-
-    /* Spacer for PC */
-    #input-spacer {
-      height: 20px; /* Adjust this value to raise the input box */
-    }
-
-    /* Ensures the input box and button look good on mobile */
-    @media (max-width: 600px) {
-      #input-area {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      #command {
-        width: 100%;
-        margin-bottom: 5px;
-      }
-      #send-btn {
-        width: 100%;
-      }
     }
 
     #command {
@@ -92,7 +80,6 @@
       }
     }
 
-    /* Hide the scrollbar but keep it functional */
     #output::-webkit-scrollbar {
       width: 0px;
       height: 0px;
@@ -101,6 +88,7 @@
 </head>
 <body>
 
+  <div id="clock">00:00:00:000</div>
   <div id="output"></div>
 
   <div id="input-area">
@@ -108,20 +96,35 @@
     <button id="send-btn">Send</button>
   </div>
 
-  <!-- Spacer div to push the input box up -->
-  <div id="input-spacer"></div>
-
   <script>
     const output = document.getElementById("output");
     const commandInput = document.getElementById("command");
     const sendBtn = document.getElementById("send-btn");
+    const clock = document.getElementById("clock");
 
     const delayPerWord = 200;
     const initialPause = 1000;
+    let isTyping = false;
 
-    let isTyping = false; // To track if typing is in progress
+    // ✨ Clock with stutter effect
+    let realTime = Date.now();
+    function updateClock() {
+      const now = Date.now();
+      const skew = (Math.random() < 0.1) ? (Math.random() * 1000 - 500) : 0;
+      realTime += (now - realTime) + skew;
+      const d = new Date(realTime);
 
-    function typeOut(text) {
+      const hh = String(d.getHours()).padStart(2, '0');
+      const mm = String(d.getMinutes()).padStart(2, '0');
+      const ss = String(d.getSeconds()).padStart(2, '0');
+      const ms = String(d.getMilliseconds()).padStart(3, '0');
+      clock.textContent = `${hh}:${mm}:${ss}:${ms}`;
+
+      setTimeout(updateClock, 100);
+    }
+    updateClock();
+
+    function typeOut(text, callback) {
       const words = text.split(" ");
       let i = 0;
 
@@ -133,7 +136,8 @@
           setTimeout(addNextWord, delayPerWord);
         } else {
           output.textContent += "\n";
-          isTyping = false; // Finished typing
+          isTyping = false;
+          if (callback) callback();
         }
       }
 
@@ -142,26 +146,47 @@
 
     function runCommand() {
       const input = commandInput.value.trim();
-      if (input === "") return;
+      if (input === "" || isTyping) return;
+      isTyping = true;
 
-      // Prevent typing if already typing
-      if (isTyping) return;
-
-      isTyping = true; // Typing is in progress
       output.textContent += `\n>>> ${input}\n`;
+      const lowerInput = input.toLowerCase();
 
-      // Easter Egg Commands
-      if (input.toLowerCase() === "hello" || input.toLowerCase() === "hello?") {
+      // Easter Eggs
+      if (lowerInput === "hello" || lowerInput === "hello?") {
         typeOut("INTENDED ENTRY POINT IDENTIFIED. WELCOME BACK V-[REDACTED]");
-      } else if (input.toLowerCase() === "shutdown") {
+      } else if (lowerInput === "shutdown") {
         typeOut("[WARNING] Shutdown terminates V-[REDACTED] human lifeforms. Press c to confirm.");
-      } else if (input.toLowerCase() === "c") {
-        // Simulate user's public IP for fun
-        const fakeIP = `192.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
+      } else if (lowerInput === "c") {
+        const fakeIP = `192.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
         typeOut(`[ERROR] Attempted breech of 'Entity Awareness Violation' '${fakeIP}' forwarded to [REDACTED]`);
-      } else if (input.toLowerCase() === "cmd") {
-        typeOut("Available Commands: placeholder");
-      } else {
+      }
+
+      // Command list
+      else if (lowerInput === "cmd" || lowerInput === "cmds") {
+        typeOut("Available Commands: view:<repository-title>, files/declassified, simtest:PongPredict.v(delta)1.1");
+      }
+
+      // files/declassified
+      else if (lowerInput === "files/declassified") {
+        typeOut("Placeholder.pdf\nPlaceholder.pdf\nPlaceholder.pdf");
+      }
+
+      // simtest link
+      else if (lowerInput === "simtest:pongpredict.v(delta)1.1") {
+        typeOut("Opening simulation test...");
+        setTimeout(() => window.open("https://smolly-co.github.io/mirror-loop/pong-predict", "_blank"), 3000);
+      }
+
+      // view:<file>
+      else if (lowerInput.startsWith("view:")) {
+        const file = lowerInput.slice(5);
+        typeOut(`Opening ${file}.pdf`);
+        setTimeout(() => window.open(`${file}.pdf`, "_blank"), 3000);
+      }
+
+      // unknown
+      else {
         typeOut("[ERROR] Command not recognised.");
       }
 
