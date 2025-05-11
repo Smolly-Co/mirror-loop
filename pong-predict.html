@@ -1,231 +1,219 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PongPredict™</title>
-    <style>
-        body {
-            display: flex;
-            height: 100vh;
-            margin: 0;
-            background-color: black;
-            color: white;
-        }
-        #left, #right {
-            width: 50%;
-            height: 100%;
-        }
-        #left {
-            background-color: black;
-        }
-        #right {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #111;
-        }
-        canvas {
-            display: block;
-            margin: 0 auto;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pong Predict</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background: black;
+      color: white;
+      font-family: 'Courier New', monospace;
+      overflow: hidden;
+    }
+    #container {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+    }
+    canvas {
+      flex: 1;
+      background: black;
+    }
+    #intro {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: black;
+      color: white;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      text-align: left;
+      line-height: 1.6;
+      z-index: 10;
+    }
+    .vhs {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.02),
+        rgba(255, 255, 255, 0.02) 2px,
+        transparent 2px,
+        transparent 4px
+      );
+      mix-blend-mode: overlay;
+      pointer-events: none;
+      animation: flicker 3s infinite;
+    }
+    @keyframes flicker {
+      0%, 90%, 100% { opacity: 1; }
+      91%, 95% { opacity: 0; }
+    }
+  </style>
 </head>
 <body>
+  <div id="intro">
+    <div>
+      <p><strong>Open Testing:</strong> Pong Predict is a small scale experiment which will simulate ~120 games of pong in order to predict the outcome 5 seconds into the future. The display on the right will show the predicted score.</p>
+      <p><strong>Press ESC</strong> to end the simulation.<br><strong>Press RETURN</strong> to enter the simulation.</p>
+      <p><em>Note:</em> I thought this was self explanatory but I got an email from David, who couldn't work out the up and down arrow keys move your paddle. Shame on you David. Also, sorry to our mobile workers, the simulation is in a primitive state and is almost unplayable on mobile.</p>
+    </div>
+  </div>
+  <div id="container">
+    <canvas id="live"></canvas>
+    <canvas id="predicted"></canvas>
+    <div class="vhs"></div>
+  </div>
+  <script>
+    const intro = document.getElementById("intro");
+    let started = false;
 
-<div id="left">
-    <canvas id="pongCanvas"></canvas>
-</div>
-<div id="right">
-    <canvas id="predictionCanvas"></canvas>
-</div>
+    const canvasLive = document.getElementById("live");
+    const canvasPred = document.getElementById("predicted");
+    const ctxLive = canvasLive.getContext("2d");
+    const ctxPred = canvasPred.getContext("2d");
 
-<script>
-    const pongCanvas = document.getElementById('pongCanvas');
-    const predictionCanvas = document.getElementById('predictionCanvas');
-    const ctx = pongCanvas.getContext('2d');
-    const predCtx = predictionCanvas.getContext('2d');
+    canvasLive.width = canvasPred.width = window.innerWidth / 2;
+    canvasLive.height = canvasPred.height = window.innerHeight;
 
-    pongCanvas.width = 600;
-    pongCanvas.height = 400;
-    predictionCanvas.width = 600;
-    predictionCanvas.height = 400;
-
-    let ballX = pongCanvas.width / 2;
-    let ballY = pongCanvas.height / 2;
-    let ballSpeedX = 2;  // Slower ball speed
-    let ballSpeedY = 2;  // Slower ball speed
+    const paddleHeight = 80;
     const paddleWidth = 10;
-    const paddleHeight = 100;
-    let playerY = pongCanvas.height / 2 - paddleHeight / 2;
-    let aiY = pongCanvas.height / 2 - paddleHeight / 2;
-    const playerSpeed = 4;  // Slower player speed
-    const aiSpeed = 1.5;  // Slower AI speed, reduced from before
-    let playerScore = 0;
-    let aiScore = 0;
-    let gameStarted = false;
+    let playerY = canvasLive.height / 2 - paddleHeight / 2;
+    let aiY = canvasLive.height / 2 - paddleHeight / 2;
+    const paddleSpeed = 4;
 
-    // Key press events for controlling player paddle
-    let upPressed = false;
-    let downPressed = false;
+    const ballSize = 10;
+    let ball = {
+      x: canvasLive.width / 2,
+      y: canvasLive.height / 2,
+      vx: 3,
+      vy: 2,
+    };
 
-    // Event listener to start the game on click
-    document.addEventListener("click", startGame);
+    let score = { player: 0, ai: 0 };
 
-    function startGame() {
-        if (!gameStarted) {
-            gameStarted = true;
-            gameLoop();
-        }
-    }
-
-    function gameLoop() {
-        updateGame();
-        drawGame();
-        predictFuture();
-        if (gameStarted) {
-            requestAnimationFrame(gameLoop);
-        }
-    }
-
-    function updateGame() {
-        // Ball movement
-        ballX += ballSpeedX;
-        ballY += ballSpeedY;
-
-        // Ball bounce off top/bottom walls
-        if (ballY <= 0 || ballY >= pongCanvas.height) ballSpeedY = -ballSpeedY;
-
-        // Ball bounce off paddles
-        if (ballX <= paddleWidth && ballY > playerY && ballY < playerY + paddleHeight) {
-            ballSpeedX = -ballSpeedX;
-        }
-        if (ballX >= pongCanvas.width - paddleWidth && ballY > aiY && ballY < aiY + paddleHeight) {
-            ballSpeedX = -ballSpeedX;
-        }
-
-        // Ball out of bounds
-        if (ballX <= 0) {
-            aiScore++;
-            resetBall();
-        }
-        if (ballX >= pongCanvas.width) {
-            playerScore++;
-            resetBall();
-        }
-
-        // AI movement
-        if (aiY + paddleHeight / 2 < ballY) aiY += aiSpeed;
-        if (aiY + paddleHeight / 2 > ballY) aiY -= aiSpeed;
-
-        // Player movement
-        if (upPressed && playerY > 0) playerY -= playerSpeed;
-        if (downPressed && playerY < pongCanvas.height - paddleHeight) playerY += playerSpeed;
-    }
-
-    function drawGame() {
-        ctx.clearRect(0, 0, pongCanvas.width, pongCanvas.height);
-
-        // Draw bounding box
-        ctx.strokeStyle = 'white';
-        ctx.strokeRect(0, 0, pongCanvas.width, pongCanvas.height);
-
-        // Draw paddles
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, playerY, paddleWidth, paddleHeight);  // Player paddle
-        ctx.fillRect(pongCanvas.width - paddleWidth, aiY, paddleWidth, paddleHeight);  // AI paddle
-
-        // Draw square ball
-        ctx.fillStyle = 'white';
-        ctx.fillRect(ballX, ballY, 15, 15);  // Square ball (15x15 px)
-
-        // Draw score
-        ctx.font = '30px Courier New';
-        ctx.fillText(playerScore, pongCanvas.width / 4, 50);
-        ctx.fillText(aiScore, pongCanvas.width - pongCanvas.width / 4, 50);
-    }
-
-    // Predict where ball, paddles, and score will be in 5 seconds (300 frames)
-    function predictFuture() {
-        predCtx.clearRect(0, 0, predictionCanvas.width, predictionCanvas.height);
-
-        // Apply VHS distortion effect (flicker and noise)
-        if (Math.random() < 0.02) {
-            predCtx.fillStyle = 'black';
-            predCtx.fillRect(0, 0, predictionCanvas.width, predictionCanvas.height);
-        }
-
-        // Predict the future ball position (simulate 300 frames for 5 seconds of movement)
-        let predictedBallX = ballX;
-        let predictedBallY = ballY;
-        let predictedBallSpeedX = ballSpeedX;
-        let predictedBallSpeedY = ballSpeedY;
-
-        let predictedPlayerY = playerY;
-        let predictedAiY = aiY;
-
-        for (let i = 0; i < 300; i++) {  // Simulate 5 seconds of movement (300 frames at 60fps)
-            predictedBallX += predictedBallSpeedX;
-            predictedBallY += predictedBallSpeedY;
-
-            // Ball bounce off top/bottom walls
-            if (predictedBallY <= 0 || predictedBallY >= pongCanvas.height) predictedBallSpeedY = -predictedBallSpeedY;
-
-            // Ball bounce off paddles
-            if (predictedBallX <= paddleWidth && predictedBallY > predictedPlayerY && predictedBallY < predictedPlayerY + paddleHeight) {
-                predictedBallSpeedX = -predictedBallSpeedX;
-            }
-            if (predictedBallX >= pongCanvas.width - paddleWidth && predictedBallY > predictedAiY && predictedBallY < predictedAiY + paddleHeight) {
-                predictedBallSpeedX = -predictedBallSpeedX;
-            }
-
-            // AI movement prediction (adjusted to be less perfect)
-            if (predictedAiY + paddleHeight / 2 < predictedBallY) predictedAiY += aiSpeed * 0.75;  // Slower AI movement
-            if (predictedAiY + paddleHeight / 2 > predictedBallY) predictedAiY -= aiSpeed * 0.75;  // Slower AI movement
-
-            // Player movement prediction (assuming they move upwards or downwards)
-            if (upPressed && predictedPlayerY > 0) predictedPlayerY -= playerSpeed;
-            if (downPressed && predictedPlayerY < pongCanvas.height - paddleHeight) predictedPlayerY += playerSpeed;
-        }
-
-        // Draw predicted ball (visual prediction)
-        predCtx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-        predCtx.fillRect(predictedBallX, predictedBallY, 15, 15);  // Predicted square ball (15x15 px)
-
-        // Draw predicted player and AI paddles (visual prediction)
-        predCtx.fillRect(0, predictedPlayerY, paddleWidth, paddleHeight);  // Predicted player paddle
-        predCtx.fillRect(predictionCanvas.width - paddleWidth, predictedAiY, paddleWidth, paddleHeight);  // Predicted AI paddle
-
-        // Predict score changes visually
-        let predictedPlayerScore = playerScore;
-        let predictedAiScore = aiScore;
-        if (predictedBallX <= 0) predictedAiScore++;
-        if (predictedBallX >= pongCanvas.width) predictedPlayerScore++;
-
-        // Display the predicted score (visually)
-        predCtx.font = '30px Courier New';
-        predCtx.fillText(predictedPlayerScore, predictionCanvas.width / 4, 50);
-        predCtx.fillText(predictedAiScore, predictionCanvas.width - predictionCanvas.width / 4, 50);
-    }
-
-    // Handle paddle controls
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowUp') upPressed = true;
-        if (e.key === 'ArrowDown') downPressed = true;
+    const keys = {};
+    window.addEventListener("keydown", (e) => {
+      keys[e.key] = true;
+      if (e.key === "Escape") location.reload();
+      if (e.key === "Enter" && !started) {
+        started = true;
+        intro.style.display = "none";
+        loop();
+      }
+    });
+    window.addEventListener("keyup", (e) => {
+      keys[e.key] = false;
     });
 
-    document.addEventListener('keyup', (e) => {
-        if (e.key === 'ArrowUp') upPressed = false;
-        if (e.key === 'ArrowDown') downPressed = false;
-    });
+    function draw(ctx, ball, playerY, aiY, score) {
+      ctx.clearRect(0, 0, canvasLive.width, canvasLive.height);
 
-    // Reset ball to center
-    function resetBall() {
-        ballX = pongCanvas.width / 2;
-        ballY = pongCanvas.height / 2;
-        ballSpeedX = -ballSpeedX;
-        ballSpeedY = 2 * (Math.random() < 0.5 ? 1 : -1);
+      // bounding box
+      ctx.strokeStyle = "white";
+      ctx.strokeRect(0, 0, canvasLive.width, canvasLive.height);
+
+      // paddles
+      ctx.fillStyle = "white";
+      ctx.fillRect(10, playerY, paddleWidth, paddleHeight);
+      ctx.fillRect(canvasLive.width - 20, aiY, paddleWidth, paddleHeight);
+
+      // ball
+      ctx.fillRect(ball.x, ball.y, ballSize, ballSize);
+
+      // score
+      ctx.font = "16px Courier New";
+      ctx.fillText(`You: ${score.player}`, 20, 20);
+      ctx.fillText(`AI: ${score.ai}`, canvasLive.width - 100, 20);
     }
-</script>
+
+    function moveAI(ball, aiY) {
+      const target = ball.y - paddleHeight / 2 + ballSize / 2;
+      return aiY + (target > aiY ? 2 : -2);
+    }
+
+    function update(ball, playerY, aiY, score) {
+      ball.x += ball.vx;
+      ball.y += ball.vy;
+
+      // wall bounce
+      if (ball.y <= 0 || ball.y + ballSize >= canvasLive.height) {
+        ball.vy *= -1;
+      }
+
+      // paddle bounce + randomness
+      if (
+        ball.x <= 20 &&
+        ball.y + ballSize >= playerY &&
+        ball.y <= playerY + paddleHeight
+      ) {
+        ball.vx = Math.abs(ball.vx);
+        ball.vy += (Math.random() - 0.5) * 2;
+      }
+      if (
+        ball.x + ballSize >= canvasLive.width - 20 &&
+        ball.y + ballSize >= aiY &&
+        ball.y <= aiY + paddleHeight
+      ) {
+        ball.vx = -Math.abs(ball.vx);
+        ball.vy += (Math.random() - 0.5) * 2;
+      }
+
+      // scoring
+      if (ball.x < 0) {
+        score.ai++;
+        reset(ball);
+      } else if (ball.x > canvasLive.width) {
+        score.player++;
+        reset(ball);
+      }
+
+      return { ball, playerY, aiY, score };
+    }
+
+    function reset(ball) {
+      ball.x = canvasLive.width / 2;
+      ball.y = canvasLive.height / 2;
+      ball.vx = 3 * (Math.random() > 0.5 ? 1 : -1);
+      ball.vy = 2 * (Math.random() > 0.5 ? 1 : -1);
+    }
+
+    function predictState(initialBall, aiY, frames = 300) {
+      let b = { ...initialBall };
+      let aY = aiY;
+      let s = { ...score };
+      for (let i = 0; i < frames; i++) {
+        aY = moveAI(b, aY);
+        ({ ball: b, aiY: aY, score: s } = update(b, playerY, aY, s));
+      }
+      return { ball: b, aiY: aY, score: s };
+    }
+
+    function loop() {
+      if (keys.ArrowUp) playerY -= paddleSpeed;
+      if (keys.ArrowDown) playerY += paddleSpeed;
+      aiY = moveAI(ball, aiY);
+
+      update(ball, playerY, aiY, score);
+      draw(ctxLive, ball, playerY, aiY, score);
+
+      // predict
+      const pred = predictState(ball, aiY);
+      draw(ctxPred, pred.ball, playerY, pred.aiY, pred.score);
+
+      requestAnimationFrame(loop);
+    }
+  </script>
 </body>
 </html>
