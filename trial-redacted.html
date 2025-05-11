@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Smolly-Co Trial Console</title>
+  <title>Observer.Void.AI Trial</title>
   <style>
     body {
       margin: 0;
@@ -103,8 +103,9 @@
 
     const knownFiles = ["log-12-7-97-fire-report"];
 
-    function randomIP(start = 192) {
-      return `${start}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
+    // Always return fake IP
+    function fakeIP() {
+      return "192.placeholder.placeholder.placeholder";
     }
 
     // Laggy clock stutter ✨
@@ -152,7 +153,7 @@
       } else if (lower === "shutdown") {
         typeOut("[WARNING] Shutdown terminates V-[REDACTED] human lifeforms. Press c to confirm.");
       } else if (lower === "c") {
-        typeOut(`[ERROR] Attempted breech of 'Entity Awareness Violation' '${randomIP()}' forwarded to [REDACTED]`);
+        typeOut(`[ERROR] Attempted breech of 'Entity Awareness Violation' '${fakeIP()}' forwarded to [REDACTED]`);
       } else if (lower === "cmd" || lower === "cmds") {
         typeOut("Available Commands:\n- view:<repository-title>\n- files/declassified\n- simtest:PongPredict.v(delta)1.1\n- info:<agent-number>");
       } else if (lower === "files/declassified") {
@@ -163,7 +164,7 @@
       } else if (lower.startsWith("view:")) {
         const file = lower.slice(5);
         if (knownFiles.includes(file)) {
-          typeOut(`Opening ${file}...`);
+          typeOut("Opening...");
           setTimeout(() => window.open(`https://smolly-co.github.io/mirror-loop/${file}/`, "_blank"), 3000);
         } else {
           typeOut("This file either does not exist, or is under level >0 Classification");
@@ -175,7 +176,7 @@
             typeOut("ANOMALY IDENTIFIED. 913 is demonstrating ATYPICAL behaviour: signs of self-awareness, prolonged stares at monitor nodes, etc.");
           } else {
             const prefix = agent.split("-")[1];
-            typeOut(`Performing as expected. Nearest monitor node: ${randomIP(parseInt(prefix))}`);
+            typeOut(`Performing as expected. Nearest monitor node: ${fakeIP()}`);
           }
         } else {
           typeOut("[ERROR] Invalid agent identifier format. Use V-###");
