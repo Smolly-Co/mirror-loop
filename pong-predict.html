@@ -53,8 +53,8 @@
 
     let ballX = pongCanvas.width / 2;
     let ballY = pongCanvas.height / 2;
-    let ballSpeedX = 4;  // Slower ball speed
-    let ballSpeedY = 4;  // Slower ball speed
+    let ballSpeedX = 2;  // Slower ball speed
+    let ballSpeedY = 2;  // Slower ball speed
     const paddleWidth = 10;
     const paddleHeight = 100;
     let playerY = pongCanvas.height / 2 - paddleHeight / 2;
@@ -146,16 +146,37 @@
         predCtx.clearRect(0, 0, predictionCanvas.width, predictionCanvas.height);
 
         // Predict the future ball position (simulate 3 seconds of movement)
-        let predictedBallX = ballX + ballSpeedX * 3;
-        let predictedBallY = ballY + ballSpeedY * 3;
+        let predictedBallX = ballX;
+        let predictedBallY = ballY;
+        let predictedBallSpeedX = ballSpeedX;
+        let predictedBallSpeedY = ballSpeedY;
 
-        // Predict the future player and AI paddle positions
-        let predictedPlayerY = playerY + playerSpeed * 3 * (upPressed ? -1 : 1);
-        let predictedAiY = aiY + aiSpeed * 3 * (ballY > aiY + paddleHeight / 2 ? 1 : -1);
+        let predictedPlayerY = playerY;
+        let predictedAiY = aiY;
 
-        // Ensure paddles and ball stay within bounds
-        predictedPlayerY = Math.max(0, Math.min(predictedPlayerY, pongCanvas.height - paddleHeight));
-        predictedAiY = Math.max(0, Math.min(predictedAiY, pongCanvas.height - paddleHeight));
+        for (let i = 0; i < 30; i++) {  // Simulate 3 seconds of movement (30 frames)
+            predictedBallX += predictedBallSpeedX;
+            predictedBallY += predictedBallSpeedY;
+
+            // Ball bounce off top/bottom walls
+            if (predictedBallY <= 0 || predictedBallY >= pongCanvas.height) predictedBallSpeedY = -predictedBallSpeedY;
+
+            // Ball bounce off paddles
+            if (predictedBallX <= paddleWidth && predictedBallY > predictedPlayerY && predictedBallY < predictedPlayerY + paddleHeight) {
+                predictedBallSpeedX = -predictedBallSpeedX;
+            }
+            if (predictedBallX >= pongCanvas.width - paddleWidth && predictedBallY > predictedAiY && predictedBallY < predictedAiY + paddleHeight) {
+                predictedBallSpeedX = -predictedBallSpeedX;
+            }
+
+            // AI movement prediction
+            if (predictedAiY + paddleHeight / 2 < predictedBallY) predictedAiY += aiSpeed;
+            if (predictedAiY + paddleHeight / 2 > predictedBallY) predictedAiY -= aiSpeed;
+
+            // Player movement prediction (assuming they move upwards or downwards)
+            if (upPressed && predictedPlayerY > 0) predictedPlayerY -= playerSpeed;
+            if (downPressed && predictedPlayerY < pongCanvas.height - paddleHeight) predictedPlayerY += playerSpeed;
+        }
 
         // Draw predicted ball (visual prediction)
         predCtx.fillStyle = 'rgba(255, 255, 255, 0.5)';
@@ -193,7 +214,7 @@
         ballX = pongCanvas.width / 2;
         ballY = pongCanvas.height / 2;
         ballSpeedX = -ballSpeedX;
-        ballSpeedY = 4 * (Math.random() < 0.5 ? 1 : -1);
+        ballSpeedY = 2 * (Math.random() < 0.5 ? 1 : -1);
     }
 </script>
 </body>
