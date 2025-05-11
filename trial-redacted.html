@@ -77,8 +77,8 @@
     }
 
     #output::-webkit-scrollbar {
-      width: 0px;
-      height: 0px;
+      width: 0;
+      height: 0;
     }
   </style>
 </head>
@@ -104,10 +104,10 @@
     const knownFiles = ["log-12-7-97-fire-report"];
 
     function randomIP(start = 192) {
-      return `${start}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
+      return `${start}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
     }
 
-    // ✨ Clock with lag/spurt stutter
+    // Laggy clock stutter ✨
     let realTime = Date.now();
     function updateClock() {
       const now = Date.now();
@@ -154,9 +154,9 @@
       } else if (lower === "c") {
         typeOut(`[ERROR] Attempted breech of 'Entity Awareness Violation' '${randomIP()}' forwarded to [REDACTED]`);
       } else if (lower === "cmd" || lower === "cmds") {
-        typeOut("Available Commands:\n- view:<repository-title>, files/declassified, simtest:PongPredict.v(delta)1.1, info:<agent-number>");
+        typeOut("Available Commands:\n- view:<repository-title>\n- files/declassified\n- simtest:PongPredict.v(delta)1.1\n- info:<agent-number>");
       } else if (lower === "files/declassified") {
-        typeOut("log-12-7-97-fire-report.html");
+        typeOut("log-12-7-97-fire-report");
       } else if (lower === "simtest:pongpredict.v(delta)1.1") {
         typeOut("Opening simulation test...");
         setTimeout(() => window.open("https://smolly-co.github.io/mirror-loop/pong-predict", "_blank"), 3000);
