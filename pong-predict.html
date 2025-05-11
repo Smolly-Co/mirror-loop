@@ -68,6 +68,13 @@
     let upPressed = false;
     let downPressed = false;
 
+    // Define a new margin from the edge of the canvas (e.g., 20px)
+    const paddleMargin = 20;
+
+    // Player and AI paddles' new positions
+    let playerX = paddleMargin; // Player paddle moves right from the left edge
+    let aiX = pongCanvas.width - paddleWidth - paddleMargin; // AI paddle moves left from the right edge
+
     document.addEventListener("click", startGame);
 
     function startGame() {
@@ -87,20 +94,19 @@
     }
 
     function updateGame() {
-        // Ball movement before collision detection
         ballX += ballSpeedX;
         ballY += ballSpeedY;
 
         // Ball bounce off top/bottom walls
         if (ballY <= 0 || ballY >= pongCanvas.height) ballSpeedY = -ballSpeedY;
 
-        // Ball bounce off paddles (adjust this part)
-        if (ballX <= paddleWidth && ballY > playerY && ballY < playerY + paddleHeight) {
+        // Ball bounce off paddles (adjusted for new paddle positions)
+        if (ballX <= playerX + paddleWidth && ballX + 15 >= playerX && ballY > playerY && ballY < playerY + paddleHeight) {
             ballSpeedX = -ballSpeedX;
             randomizeBallAngle(); // Randomize angle after hitting player paddle
         }
 
-        if (ballX >= pongCanvas.width - paddleWidth && ballY > aiY && ballY < aiY + paddleHeight) {
+        if (ballX >= aiX - 15 && ballX <= aiX && ballY > aiY && ballY < aiY + paddleHeight) {
             ballSpeedX = -ballSpeedX;
             randomizeBallAngle(); // Randomize angle after hitting AI paddle
         }
@@ -131,10 +137,10 @@
         ctx.strokeStyle = 'white';
         ctx.strokeRect(0, 0, pongCanvas.width, pongCanvas.height);
 
-        // Draw paddles
+        // Draw paddles at the new positions
         ctx.fillStyle = 'white';
-        ctx.fillRect(0, playerY, paddleWidth, paddleHeight);  // Player paddle
-        ctx.fillRect(pongCanvas.width - paddleWidth, aiY, paddleWidth, paddleHeight);  // AI paddle
+        ctx.fillRect(playerX, playerY, paddleWidth, paddleHeight);  // Player paddle
+        ctx.fillRect(aiX, aiY, paddleWidth, paddleHeight);  // AI paddle
 
         // Draw square ball
         ctx.fillStyle = 'white';
@@ -168,10 +174,10 @@
 
             if (predictedBallY <= 0 || predictedBallY >= pongCanvas.height) predictedBallSpeedY = -predictedBallSpeedY;
 
-            if (predictedBallX <= paddleWidth && predictedBallY > predictedPlayerY && predictedBallY < predictedPlayerY + paddleHeight) {
+            if (predictedBallX <= playerX + paddleWidth && predictedBallX + 15 >= playerX && predictedBallY > predictedPlayerY && predictedBallY < predictedPlayerY + paddleHeight) {
                 predictedBallSpeedX = -predictedBallSpeedX;
             }
-            if (predictedBallX >= pongCanvas.width - paddleWidth && predictedBallY > predictedAiY && predictedBallY < predictedAiY + paddleHeight) {
+            if (predictedBallX >= aiX - 15 && predictedBallX <= aiX && predictedBallY > predictedAiY && predictedBallY < predictedAiY + paddleHeight) {
                 predictedBallSpeedX = -predictedBallSpeedX;
             }
 
