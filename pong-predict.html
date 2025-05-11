@@ -1,8 +1,9 @@
+<!-- Updated Pong Predict HTML -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Pong Predict</title>
   <style>
     html, body {
@@ -14,12 +15,11 @@
       overflow: hidden;
       height: 100%;
     }
+
     #intro {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background-color: black;
       display: flex;
       flex-direction: column;
@@ -31,15 +31,19 @@
       text-align: center;
       z-index: 2;
     }
+
     #game {
       display: flex;
       width: 100vw;
       height: 100vh;
     }
+
     canvas {
       flex: 1;
       height: 100%;
+      background-color: black;
     }
+
     .score {
       position: absolute;
       top: 10px;
@@ -48,16 +52,20 @@
       color: white;
       z-index: 1;
     }
+
     #playerScore {
-      left: 20px;
+      left: 40px;
     }
+
     #aiScore {
-      right: 20px;
+      right: 40px;
     }
+
     .vhs {
       filter: contrast(1.1) brightness(1.2);
       animation: flicker 5s infinite;
     }
+
     @keyframes flicker {
       0%, 90%, 100% { opacity: 1; }
       95% { opacity: 0; }
@@ -66,13 +74,15 @@
 </head>
 <body>
   <div id="intro">
-    <p><strong>Open Testing:</strong> Pong Predict is a small-scale experiment which will simulate ~120 games of pong in order to predict the outcome 5 seconds into the future.</p>
-    <p>The display on the right will show the predicted score.</p>
-    <p>Press <strong>Esc</strong> to end the simulation.<br>Press <strong>Return</strong> to enter the simulation.</p>
-    <p><em>Note:</em> I thought this was self-explanatory but I got an email from David, who couldn't work out the up and down arrow keys move your paddle. Shame on you, David.<br>Also, sorry to our mobile workers — the simulation is in a primitive state and is almost unplayable on mobile.</p>
+    <p><strong>Open Testing:</strong> Pong Predict simulates ~120 games of pong to predict the outcome 5 seconds into the future.</p>
+    <p>The right display shows predicted score & positions.</p>
+    <p>Press <strong>Return</strong> to enter. Press <strong>Esc</strong> to exit.</p>
+    <p><em>Note:</em> Up/Down arrows to move your paddle. Yes, David. It really is that simple.</p>
   </div>
+
   <div id="playerScore" class="score">0</div>
   <div id="aiScore" class="score">0</div>
+
   <div id="game" style="display: none">
     <canvas id="gameCanvas"></canvas>
     <canvas id="predictionCanvas" class="vhs"></canvas>
@@ -111,47 +121,57 @@
       let playerScore = 0, aiScore = 0;
 
       const keys = {};
-      document.addEventListener("keydown", (e) => keys[e.key] = true);
-      document.addEventListener("keyup", (e) => keys[e.key] = false);
+      document.addEventListener("keydown", e => keys[e.key] = true);
+      document.addEventListener("keyup", e => keys[e.key] = false);
 
-      function draw(ctx, px, py, ax, ay, bx, by) {
+      function drawScene(ctx, px, py, ax, ay, bx, by, vx, vy) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = "white";
+
+        // Draw paddles
         ctx.fillRect(0, py, paddleWidth, paddleHeight);
         ctx.fillRect(canvas.width - paddleWidth, ay, paddleWidth, paddleHeight);
+
+        // Bounding boxes for paddles
+        ctx.strokeStyle = "#444";
+        ctx.strokeRect(0, py, paddleWidth, paddleHeight);
+        ctx.strokeRect(canvas.width - paddleWidth, ay, paddleWidth, paddleHeight);
+
+        // Ball
         ctx.fillRect(bx, by, ballSize, ballSize);
 
-        // Bounding box prediction
+        // Prediction trail
         ctx.strokeStyle = "white";
         for (let i = 1; i <= 3; i++) {
-          ctx.strokeRect(bx + ballVX * i * 20, by + ballVY * i * 20, ballSize, ballSize);
+          ctx.strokeRect(bx + vx * i * 20, by + vy * i * 20, ballSize, ballSize);
         }
       }
 
-      function update() {
-        // Player control
+      function updateGame() {
         if (keys["ArrowUp"]) playerY -= 4;
         if (keys["ArrowDown"]) playerY += 4;
         playerY = Math.max(0, Math.min(canvas.height - paddleHeight, playerY));
 
-        // AI follows with delay
-        const centerAI = aiY + paddleHeight / 2;
-        if (centerAI < ballY - 10) aiY += 2;
-        else if (centerAI > ballY + 10) aiY -= 2;
+        const aiCenter = aiY + paddleHeight / 2;
+        if (aiCenter < ballY - 10) aiY += 2;
+        else if (aiCenter > ballY + 10) aiY -= 2;
         aiY = Math.max(0, Math.min(canvas.height - paddleHeight, aiY));
 
-        // Move ball
         ballX += ballVX;
         ballY += ballVY;
 
-        if (ballY < 0 || ballY > canvas.height - ballSize) ballVY = -ballVY;
+        if (ballY <= 0 || ballY >= canvas.height - ballSize) ballVY *= -1;
 
-        // Paddle collisions
-        if (ballX < paddleWidth && ballY + ballSize > playerY && ballY < playerY + paddleHeight) {
+        if (ballX <= paddleWidth &&
+            ballY + ballSize > playerY &&
+            ballY < playerY + paddleHeight) {
           ballVX = Math.abs(ballVX);
           ballVY += (Math.random() - 0.5) * 2;
         }
-        if (ballX > canvas.width - paddleWidth - ballSize && ballY + ballSize > aiY && ballY < aiY + paddleHeight) {
+
+        if (ballX >= canvas.width - paddleWidth - ballSize &&
+            ballY + ballSize > aiY &&
+            ballY < aiY + paddleHeight) {
           ballVX = -Math.abs(ballVX);
           ballVY += (Math.random() - 0.5) * 2;
         }
@@ -159,8 +179,7 @@
         if (ballX < 0) {
           aiScore++;
           resetBall();
-        }
-        if (ballX > canvas.width) {
+        } else if (ballX > canvas.width) {
           playerScore++;
           resetBall();
         }
@@ -168,7 +187,40 @@
         playerScoreElem.textContent = playerScore;
         aiScoreElem.textContent = aiScore;
 
-        draw(ctx, 0, playerY, canvas.width - paddleWidth, aiY, ballX, ballY);
+        drawScene(ctx, 0, playerY, canvas.width - paddleWidth, aiY, ballX, ballY, ballVX, ballVY);
+      }
+
+      function predictFuture() {
+        let px = playerY, ax = aiY, bx = ballX, by = ballY;
+        let vx = ballVX, vy = ballVY;
+
+        for (let i = 0; i < 300; i++) {
+          if (bx <= paddleWidth && by + ballSize > px && by < px + paddleHeight) {
+            vx = Math.abs(vx);
+            vy += (Math.random() - 0.5);
+          }
+          if (bx >= canvas.width - paddleWidth - ballSize && by + ballSize > ax && by < ax + paddleHeight) {
+            vx = -Math.abs(vx);
+            vy += (Math.random() - 0.5);
+          }
+          if (by <= 0 || by >= canvas.height - ballSize) vy *= -1;
+
+          bx += vx;
+          by += vy;
+
+          const aiCenter = ax + paddleHeight / 2;
+          if (aiCenter < by - 10) ax += 2;
+          else if (aiCenter > by + 10) ax -= 2;
+          ax = Math.max(0, Math.min(canvas.height - paddleHeight, ax));
+        }
+
+        drawScene(predCtx, 0, px, canvas.width - paddleWidth, ax, bx, by, vx, vy);
+      }
+
+      function loop() {
+        updateGame();
+        predictFuture();
+        requestAnimationFrame(loop);
       }
 
       function resetBall() {
@@ -178,42 +230,6 @@
         ballVY = (Math.random() - 0.5) * 4;
       }
 
-      function predict() {
-        let px = playerY;
-        let ax = aiY;
-        let bx = ballX;
-        let by = ballY;
-        let vx = ballVX;
-        let vy = ballVY;
-
-        for (let i = 0; i < 300; i++) {
-          if (bx < paddleWidth && by + ballSize > px && by < px + paddleHeight) {
-            vx = Math.abs(vx);
-            vy += (Math.random() - 0.5);
-          }
-          if (bx > canvas.width - paddleWidth - ballSize && by + ballSize > ax && by < ax + paddleHeight) {
-            vx = -Math.abs(vx);
-            vy += (Math.random() - 0.5);
-          }
-          if (by < 0 || by > canvas.height - ballSize) vy = -vy;
-
-          bx += vx;
-          by += vy;
-
-          const centerAI = ax + paddleHeight / 2;
-          if (centerAI < by - 10) ax += 2;
-          else if (centerAI > by + 10) ax -= 2;
-          ax = Math.max(0, Math.min(canvas.height - paddleHeight, ax));
-        }
-
-        draw(predCtx, 0, px, canvas.width - paddleWidth, ax, bx, by);
-      }
-
-      function loop() {
-        update();
-        predict();
-        requestAnimationFrame(loop);
-      }
       loop();
     }
   </script>
