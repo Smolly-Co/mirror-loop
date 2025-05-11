@@ -2,15 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pong Predict</title>
   <style>
     body {
       margin: 0;
-      overflow: hidden;
-      background: black;
+      padding: 0;
+      background-color: black;
       color: white;
-      font-family: 'Courier New', Courier, monospace;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      overflow: hidden;
     }
 
     #intro {
@@ -19,223 +21,176 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: black;
+      background-color: black;
       color: white;
       display: flex;
-      align-items: center;
+      flex-direction: column;
       justify-content: center;
-      padding: 40px;
+      align-items: center;
       text-align: center;
-      font-size: 16px;
-      line-height: 1.6;
-      white-space: pre-wrap;
-      z-index: 999;
+      padding: 30px;
+      z-index: 10;
+    }
+
+    #intro p {
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+
+    #container {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
     }
 
     canvas {
-      display: block;
-      float: left;
+      flex: 1;
+      height: 100vh;
     }
 
-    .vhs {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 50vw;
-      height: 100vh;
-      pointer-events: none;
-      mix-blend-mode: screen;
-      opacity: 0.15;
-      animation: flicker 5s infinite;
-      background: repeating-linear-gradient(
-        to bottom,
-        rgba(255,255,255,0.1),
-        rgba(255,255,255,0.1) 1px,
-        transparent 1px,
-        transparent 2px
-      );
+    #prediction {
+      filter: contrast(1.1) brightness(0.95);
+      animation: flicker 0.3s infinite alternate;
     }
 
     @keyframes flicker {
-      0%, 18%, 22%, 25%, 53%, 57%, 100% {
-        opacity: 0.15;
-      }
-      20%, 24%, 55% {
-        opacity: 0;
-      }
+      0%, 100% { opacity: 1; }
+      90% { opacity: 0.95; }
+      95% { opacity: 0; }
     }
   </style>
 </head>
 <body>
   <div id="intro">
-    <div>
-      <strong>Open Testing: Pong Predict</strong>
-      
-      A small scale experiment which will simulate ~120 games of pong
-      in order to predict the outcome 5 seconds into the future.
-      
-      The display on the right will show the predicted score.
-
-      Press <strong>Esc</strong> to end the simulation.
-      Press <strong>Return</strong> to enter the simulation.
-
-      Note: I thought this was self explanatory but I got an email from David,
-      who couldn't work out the up and down arrow keys move your paddle.
-      Shame on you David.
-
-      Also, sorry to our mobile workers—the simulation is in a primitive state
-      and is almost unplayable on mobile.
-    </div>
+    <p><strong>Open Testing: Pong Predict</strong> is a small-scale experiment which simulates ~120 games of Pong to predict the outcome 5 seconds into the future.</p>
+    <p>The display on the right shows the predicted score and ball positions.</p>
+    <p><em>Press Esc</em> to end the simulation.<br>
+    <em>Press Return</em> to enter the simulation.</p>
+    <p><small>Note: Apparently I have to say this, but the Up and Down arrow keys move your paddle. David didn't know. Shame on you, David. Sorry mobile folks—this version is kinda garbage on phones 💀</small></p>
   </div>
 
-  <canvas id="game" width="400" height="400"></canvas>
-  <canvas id="prediction" width="400" height="400"></canvas>
-  <div class="vhs"></div>
+  <div id="container" style="display: none;">
+    <canvas id="game"></canvas>
+    <canvas id="prediction"></canvas>
+  </div>
 
   <script>
     const intro = document.getElementById("intro");
-    const gameCanvas = document.getElementById("game");
-    const predCanvas = document.getElementById("prediction");
-    const gameCtx = gameCanvas.getContext("2d");
-    const predCtx = predCanvas.getContext("2d");
+    const container = document.getElementById("container");
+    const canvas = document.getElementById("game");
+    const pCanvas = document.getElementById("prediction");
+    const ctx = canvas.getContext("2d");
+    const pCtx = pCanvas.getContext("2d");
 
-    const WIDTH = 400, HEIGHT = 400;
+    canvas.width = pCanvas.width = window.innerWidth / 2;
+    canvas.height = pCanvas.height = window.innerHeight;
+
+    const paddleHeight = 80;
+    const paddleWidth = 10;
+    const ballSize = 10;
+    let playerY = canvas.height / 2 - paddleHeight / 2;
+    let aiY = canvas.height / 2 - paddleHeight / 2;
+    let ball = { x: canvas.width / 2, y: canvas.height / 2, vx: 3, vy: 2 };
+    let score = { player: 0, ai: 0 };
 
     let keys = {};
-    let gameStarted = false;
 
-    document.addEventListener('keydown', (e) => {
-      keys[e.key] = true;
-      if (!gameStarted && e.key === 'Enter') {
-        intro.style.display = 'none';
-        gameStarted = true;
-      }
-    });
+    function drawGame(ctx, ball, playerY, aiY, showBounds = false) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "white";
 
-    document.addEventListener('keyup', (e) => keys[e.key] = false);
+      if (showBounds) {
+        ctx.strokeStyle = 'white';
+        ctx.strokeRect(0, 0, canvas.width, canvas.height);
+      }
 
-    class Paddle {
-      constructor(x) {
-        this.x = x;
-        this.y = HEIGHT / 2 - 30;
-        this.width = 10;
-        this.height = 60;
-        this.speed = 3;
+      ctx.fillRect(10, playerY, paddleWidth, paddleHeight);
+      ctx.fillRect(canvas.width - 20, aiY, paddleWidth, paddleHeight);
+      ctx.fillRect(ball.x, ball.y, ballSize, ballSize);
+      ctx.fillText(`Player: ${score.player}  AI: ${score.ai}`, canvas.width / 2 - 40, 20);
+    }
+
+    function clamp(val, min, max) {
+      return Math.max(min, Math.min(max, val));
+    }
+
+    function updateGame(state, keys) {
+      if (keys["ArrowUp"]) state.playerY -= 4;
+      if (keys["ArrowDown"]) state.playerY += 4;
+
+      state.playerY = clamp(state.playerY, 0, canvas.height - paddleHeight);
+
+      const center = state.ball.y + ballSize / 2;
+      const aiCenter = state.aiY + paddleHeight / 2;
+      state.aiY += (center < aiCenter ? -2 : 2);
+      state.aiY = clamp(state.aiY, 0, canvas.height - paddleHeight);
+
+      state.ball.x += state.ball.vx;
+      state.ball.y += state.ball.vy;
+
+      if (state.ball.y <= 0 || state.ball.y + ballSize >= canvas.height) {
+        state.ball.vy *= -1;
       }
-      draw(ctx) {
-        ctx.fillStyle = "white";
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+
+      if (state.ball.x <= 20 && state.ball.y + ballSize >= state.playerY && state.ball.y <= state.playerY + paddleHeight) {
+        state.ball.vx = Math.abs(state.ball.vx);
+        state.ball.vy = (Math.random() * 4 - 2);
       }
-      move(upKey, downKey) {
-        if (keys[upKey]) this.y -= this.speed;
-        if (keys[downKey]) this.y += this.speed;
-        this.y = Math.max(0, Math.min(this.y, HEIGHT - this.height));
+
+      if (state.ball.x + ballSize >= canvas.width - 20 && state.ball.y + ballSize >= state.aiY && state.ball.y <= state.aiY + paddleHeight) {
+        state.ball.vx = -Math.abs(state.ball.vx);
+        state.ball.vy = (Math.random() * 4 - 2);
+      }
+
+      if (state.ball.x < 0) {
+        state.score.ai++;
+        resetBall(state);
+      } else if (state.ball.x > canvas.width) {
+        state.score.player++;
+        resetBall(state);
       }
     }
 
-    class Ball {
-      constructor() {
-        this.reset();
-      }
-      reset() {
-        this.x = WIDTH / 2;
-        this.y = HEIGHT / 2;
-        this.vx = (Math.random() < 0.5 ? -1 : 1) * 2;
-        this.vy = (Math.random() - 0.5) * 4;
-        this.size = 8;
-      }
-      draw(ctx) {
-        ctx.fillStyle = "white";
-        ctx.fillRect(this.x, this.y, this.size, this.size);
-      }
-      update(p1, p2) {
-        this.x += this.vx;
-        this.y += this.vy;
-
-        if (this.y <= 0 || this.y + this.size >= HEIGHT) this.vy *= -1;
-
-        // Left paddle
-        if (this.x <= p1.x + p1.width && this.y + this.size >= p1.y && this.y <= p1.y + p1.height) {
-          this.vx *= -1;
-          this.vy = (Math.random() - 0.5) * 4;
-        }
-
-        // Right paddle
-        if (this.x + this.size >= p2.x && this.y + this.size >= p2.y && this.y <= p2.y + p2.height) {
-          this.vx *= -1;
-          this.vy = (Math.random() - 0.5) * 4;
-        }
-      }
+    function resetBall(state) {
+      state.ball = { x: canvas.width / 2, y: canvas.height / 2, vx: (Math.random() > 0.5 ? 3 : -3), vy: Math.random() * 4 - 2 };
     }
 
-    const player = new Paddle(10);
-    const ai = new Paddle(WIDTH - 20);
-    const ball = new Ball();
-    let score = [0, 0];
-
-    function drawBorders(ctx) {
-      ctx.strokeStyle = "white";
-      ctx.lineWidth = 1;
-      ctx.strokeRect(0, 0, WIDTH, HEIGHT);
-    }
-
-    function drawGame(ctx, player, ai, ball) {
-      ctx.clearRect(0, 0, WIDTH, HEIGHT);
-      drawBorders(ctx);
-      player.draw(ctx);
-      ai.draw(ctx);
-      ball.draw(ctx);
-    }
-
-    function updateGame() {
-      if (!gameStarted) return;
-
-      player.move("ArrowUp", "ArrowDown");
-      ball.update(player, ai);
-
-      if (ball.x < 0) {
-        score[1]++;
-        ball.reset();
+    function predictFuture(state, frames) {
+      const clone = JSON.parse(JSON.stringify(state));
+      for (let i = 0; i < frames; i++) {
+        updateGame(clone, {});
       }
-      if (ball.x > WIDTH) {
-        score[0]++;
-        ball.reset();
-      }
-
-      // AI paddle is less godlike now
-      const center = ai.y + ai.height / 2;
-      if (center < ball.y - 10) ai.y += ai.speed * 0.6;
-      else if (center > ball.y + 10) ai.y -= ai.speed * 0.6;
-      ai.y = Math.max(0, Math.min(ai.y, HEIGHT - ai.height));
-    }
-
-    function simulatePrediction() {
-      const p1 = new Paddle(10);
-      p1.y = player.y;
-      const p2 = new Paddle(WIDTH - 20);
-      p2.y = ai.y;
-      const b = new Ball();
-      Object.assign(b, ball);
-
-      for (let i = 0; i < 300; i++) {
-        const center = p2.y + p2.height / 2;
-        if (center < b.y - 10) p2.y += p2.speed * 0.6;
-        else if (center > b.y + 10) p2.y -= p2.speed * 0.6;
-        p2.y = Math.max(0, Math.min(p2.y, HEIGHT - p2.height));
-        b.update(p1, p2);
-      }
-
-      drawGame(predCtx, p1, p2, b);
+      return clone;
     }
 
     function loop() {
-      updateGame();
-      drawGame(gameCtx, player, ai, ball);
-      simulatePrediction();
+      updateGame(gameState, keys);
+      drawGame(ctx, gameState.ball, gameState.playerY, gameState.aiY);
+
+      const prediction = predictFuture(gameState, 300);
+      drawGame(pCtx, prediction.ball, prediction.playerY, prediction.aiY, true);
+
       requestAnimationFrame(loop);
     }
 
-    loop();
+    let gameState = {
+      playerY,
+      aiY,
+      ball,
+      score: { ...score }
+    };
+
+    window.addEventListener("keydown", e => {
+      keys[e.key] = true;
+      if (e.key === "Escape") window.location.reload();
+      if (e.key === "Enter") {
+        intro.style.display = "none";
+        container.style.display = "flex";
+        loop();
+      }
+    });
+
+    window.addEventListener("keyup", e => keys[e.key] = false);
   </script>
 </body>
 </html>
