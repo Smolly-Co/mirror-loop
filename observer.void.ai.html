@@ -1,42 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smolly-Co Observer Output</title>
-    <style>
-        body {
-            font-family: monospace, "Courier New", Courier, monospace;
-            color: #00FF00;
-            background-color: black;
-            padding: 5px;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            font-size: 8px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smolly-Co Observer Output</title>
+  <style>
+    body {
+      font-family: monospace, "Courier New", Courier, monospace;
+      color: #00FF00;
+      background-color: black;
+      padding: 5px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      font-size: 8px; /* default for mobile */
+    }
+
+    @media (min-width: 768px) {
+      body {
+        font-size: 14px; /* bigger font for desktops/laptops */
+      }
+    }
+  </style>
 </head>
 <body>
 
 <pre id="output"></pre>
 
 <script>
-    function typeOutput(output, delay, elementId) {
-        let i = 0;
-        let element = document.getElementById(elementId);
-        
-        function typeChar() {
-            if (i < output.length) {
-                element.textContent += output.charAt(i);
-                i++;
-                setTimeout(typeChar, delay);
-            }
-        }
-        
-        typeChar();
+  function typeOutput(output, delay, elementId) {
+    let i = 0;
+    let element = document.getElementById(elementId);
+
+    function typeChar() {
+      if (i < output.length) {
+        element.textContent += output.charAt(i);
+        i++;
+        setTimeout(typeChar, delay);
+      }
     }
 
-    const distortedText = `
+    typeChar();
+  }
+
+  const distortedText = `
 Initializing system... ██████████[PROGRESS] 0%---10%---47%---61%---89%---98%
 [INFO] Boot sequence complete.
 [DEBUG] Booting into Shadow-hide Mode...
@@ -98,9 +104,9 @@ https://smolly-co.github.io/mirror-loop/trial-redacted
 >>> [ERROR] V-913 Termination Sequence Cancelled by [REDACTED]
 >>> MESSAGE INJECTED: "Let. Them. Watch."
     end
-    `;
-    
-    typeOutput(distortedText, 10, "output");
+  `;
+
+  typeOutput(distortedText, 10, "output");
 </script>
 
 </body>
