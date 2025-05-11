@@ -145,7 +145,7 @@
     function predictFuture() {
         predCtx.clearRect(0, 0, predictionCanvas.width, predictionCanvas.height);
 
-        // Predict the future ball position (simulate 3 seconds of movement)
+        // Predict the future ball position (simulate 300 frames for 5 seconds of movement)
         let predictedBallX = ballX;
         let predictedBallY = ballY;
         let predictedBallSpeedX = ballSpeedX;
@@ -154,7 +154,7 @@
         let predictedPlayerY = playerY;
         let predictedAiY = aiY;
 
-        for (let i = 0; i < 30; i++) {  // Simulate 3 seconds of movement (30 frames)
+        for (let i = 0; i < 300; i++) {  // Simulate 5 seconds of movement (300 frames at 60fps)
             predictedBallX += predictedBallSpeedX;
             predictedBallY += predictedBallSpeedY;
 
