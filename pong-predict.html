@@ -107,7 +107,7 @@
             randomizeBallAngle(); // Randomize the angle slightly on paddle hit
         }
 
-        if (ballX >= aiX - 15 && ballX <= aiX && ballY > aiY && ballY < aiY + paddleHeight) {
+        if (ballX >= aiX - 15 && ballY > aiY && ballY < aiY + paddleHeight) {
             ballSpeedX = -ballSpeedX; // Reverse direction on AI paddle hit
             ballSpeedY += Math.random() * 2 - 1; // Add a little randomness to the vertical bounce
             randomizeBallAngle(); // Randomize the angle slightly on AI paddle hit
