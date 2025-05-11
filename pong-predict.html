@@ -98,10 +98,19 @@
 
         // Ball bounce off paddles
         if (ballX <= paddleWidth && ballY > playerY && ballY < playerY + paddleHeight) {
+            // Randomize ball direction and velocity after hitting player paddle
             ballSpeedX = -ballSpeedX;
+            let randomAngle = Math.random() * 1.5 + 0.5;  // Random angle to make it more unpredictable
+            ballSpeedY = Math.random() * 2 * randomAngle - randomAngle; // Randomize Y speed to add more variation
+            ballSpeedX = ballSpeedX * randomAngle; // Increase the velocity a bit
         }
+
         if (ballX >= pongCanvas.width - paddleWidth && ballY > aiY && ballY < aiY + paddleHeight) {
+            // Randomize ball direction and velocity after hitting AI paddle
             ballSpeedX = -ballSpeedX;
+            let randomAngle = Math.random() * 1.5 + 0.5;  // Random angle to make it more unpredictable
+            ballSpeedY = Math.random() * 2 * randomAngle - randomAngle; // Randomize Y speed to add more variation
+            ballSpeedX = ballSpeedX * randomAngle; // Increase the velocity a bit
         }
 
         // Ball out of bounds
