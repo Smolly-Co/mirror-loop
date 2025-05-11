@@ -60,7 +60,7 @@
     let playerY = pongCanvas.height / 2 - paddleHeight / 2;
     let aiY = pongCanvas.height / 2 - paddleHeight / 2;
     const playerSpeed = 4;  // Slower player speed
-    const aiSpeed = 2;  // Slower AI speed
+    const aiSpeed = 1.5;  // Slower AI speed, reduced from before
     let playerScore = 0;
     let aiScore = 0;
     let gameStarted = false;
@@ -126,6 +126,10 @@
     function drawGame() {
         ctx.clearRect(0, 0, pongCanvas.width, pongCanvas.height);
 
+        // Draw bounding box
+        ctx.strokeStyle = 'white';
+        ctx.strokeRect(0, 0, pongCanvas.width, pongCanvas.height);
+
         // Draw paddles
         ctx.fillStyle = 'white';
         ctx.fillRect(0, playerY, paddleWidth, paddleHeight);  // Player paddle
@@ -141,9 +145,15 @@
         ctx.fillText(aiScore, pongCanvas.width - pongCanvas.width / 4, 50);
     }
 
-    // Predict where ball, paddles, and score will be in 3 seconds
+    // Predict where ball, paddles, and score will be in 5 seconds (300 frames)
     function predictFuture() {
         predCtx.clearRect(0, 0, predictionCanvas.width, predictionCanvas.height);
+
+        // Apply VHS distortion effect (flicker and noise)
+        if (Math.random() < 0.02) {
+            predCtx.fillStyle = 'black';
+            predCtx.fillRect(0, 0, predictionCanvas.width, predictionCanvas.height);
+        }
 
         // Predict the future ball position (simulate 300 frames for 5 seconds of movement)
         let predictedBallX = ballX;
@@ -169,9 +179,9 @@
                 predictedBallSpeedX = -predictedBallSpeedX;
             }
 
-            // AI movement prediction
-            if (predictedAiY + paddleHeight / 2 < predictedBallY) predictedAiY += aiSpeed;
-            if (predictedAiY + paddleHeight / 2 > predictedBallY) predictedAiY -= aiSpeed;
+            // AI movement prediction (adjusted to be less perfect)
+            if (predictedAiY + paddleHeight / 2 < predictedBallY) predictedAiY += aiSpeed * 0.75;  // Slower AI movement
+            if (predictedAiY + paddleHeight / 2 > predictedBallY) predictedAiY -= aiSpeed * 0.75;  // Slower AI movement
 
             // Player movement prediction (assuming they move upwards or downwards)
             if (upPressed && predictedPlayerY > 0) predictedPlayerY -= playerSpeed;
