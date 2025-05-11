@@ -53,23 +53,21 @@
 
     let ballX = pongCanvas.width / 2;
     let ballY = pongCanvas.height / 2;
-    let ballSpeedX = 2;  // Slower ball speed
-    let ballSpeedY = 2;  // Slower ball speed
+    let ballSpeedX = 2;  // Start with a normal ball speed
+    let ballSpeedY = 2;  // Start with a normal ball speed
     const paddleWidth = 10;
     const paddleHeight = 100;
     let playerY = pongCanvas.height / 2 - paddleHeight / 2;
     let aiY = pongCanvas.height / 2 - paddleHeight / 2;
-    const playerSpeed = 4;  // Slower player speed
-    const aiSpeed = 1.5;  // Slower AI speed, reduced from before
+    const playerSpeed = 4;
+    const aiSpeed = 1.5;
     let playerScore = 0;
     let aiScore = 0;
     let gameStarted = false;
 
-    // Key press events for controlling player paddle
     let upPressed = false;
     let downPressed = false;
 
-    // Event listener to start the game on click
     document.addEventListener("click", startGame);
 
     function startGame() {
@@ -89,7 +87,6 @@
     }
 
     function updateGame() {
-        // Ball movement
         ballX += ballSpeedX;
         ballY += ballSpeedY;
 
@@ -98,19 +95,13 @@
 
         // Ball bounce off paddles
         if (ballX <= paddleWidth && ballY > playerY && ballY < playerY + paddleHeight) {
-            // Randomize ball direction and velocity after hitting player paddle
             ballSpeedX = -ballSpeedX;
-            let randomAngle = Math.random() * 1.5 + 0.5;  // Random angle to make it more unpredictable
-            ballSpeedY = Math.random() * 2 * randomAngle - randomAngle; // Randomize Y speed to add more variation
-            ballSpeedX = ballSpeedX * randomAngle; // Increase the velocity a bit
+            randomizeBallAngle(); // Randomize angle after hitting paddle
         }
 
         if (ballX >= pongCanvas.width - paddleWidth && ballY > aiY && ballY < aiY + paddleHeight) {
-            // Randomize ball direction and velocity after hitting AI paddle
             ballSpeedX = -ballSpeedX;
-            let randomAngle = Math.random() * 1.5 + 0.5;  // Random angle to make it more unpredictable
-            ballSpeedY = Math.random() * 2 * randomAngle - randomAngle; // Randomize Y speed to add more variation
-            ballSpeedX = ballSpeedX * randomAngle; // Increase the velocity a bit
+            randomizeBallAngle(); // Randomize angle after hitting AI paddle
         }
 
         // Ball out of bounds
@@ -154,17 +145,14 @@
         ctx.fillText(aiScore, pongCanvas.width - pongCanvas.width / 4, 50);
     }
 
-    // Predict where ball, paddles, and score will be in 5 seconds (300 frames)
     function predictFuture() {
         predCtx.clearRect(0, 0, predictionCanvas.width, predictionCanvas.height);
 
-        // Apply VHS distortion effect (flicker and noise)
         if (Math.random() < 0.02) {
             predCtx.fillStyle = 'black';
             predCtx.fillRect(0, 0, predictionCanvas.width, predictionCanvas.height);
         }
 
-        // Predict the future ball position (simulate 300 frames for 5 seconds of movement)
         let predictedBallX = ballX;
         let predictedBallY = ballY;
         let predictedBallSpeedX = ballSpeedX;
@@ -173,14 +161,12 @@
         let predictedPlayerY = playerY;
         let predictedAiY = aiY;
 
-        for (let i = 0; i < 300; i++) {  // Simulate 5 seconds of movement (300 frames at 60fps)
+        for (let i = 0; i < 300; i++) {
             predictedBallX += predictedBallSpeedX;
             predictedBallY += predictedBallSpeedY;
 
-            // Ball bounce off top/bottom walls
             if (predictedBallY <= 0 || predictedBallY >= pongCanvas.height) predictedBallSpeedY = -predictedBallSpeedY;
 
-            // Ball bounce off paddles
             if (predictedBallX <= paddleWidth && predictedBallY > predictedPlayerY && predictedBallY < predictedPlayerY + paddleHeight) {
                 predictedBallSpeedX = -predictedBallSpeedX;
             }
@@ -188,36 +174,41 @@
                 predictedBallSpeedX = -predictedBallSpeedX;
             }
 
-            // AI movement prediction (adjusted to be less perfect)
-            if (predictedAiY + paddleHeight / 2 < predictedBallY) predictedAiY += aiSpeed * 0.75;  // Slower AI movement
-            if (predictedAiY + paddleHeight / 2 > predictedBallY) predictedAiY -= aiSpeed * 0.75;  // Slower AI movement
+            if (predictedAiY + paddleHeight / 2 < predictedBallY) predictedAiY += aiSpeed * 0.75;
+            if (predictedAiY + paddleHeight / 2 > predictedBallY) predictedAiY -= aiSpeed * 0.75;
 
-            // Player movement prediction (assuming they move upwards or downwards)
             if (upPressed && predictedPlayerY > 0) predictedPlayerY -= playerSpeed;
             if (downPressed && predictedPlayerY < pongCanvas.height - paddleHeight) predictedPlayerY += playerSpeed;
         }
 
-        // Draw predicted ball (visual prediction)
         predCtx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-        predCtx.fillRect(predictedBallX, predictedBallY, 15, 15);  // Predicted square ball (15x15 px)
+        predCtx.fillRect(predictedBallX, predictedBallY, 15, 15);
 
-        // Draw predicted player and AI paddles (visual prediction)
-        predCtx.fillRect(0, predictedPlayerY, paddleWidth, paddleHeight);  // Predicted player paddle
-        predCtx.fillRect(predictionCanvas.width - paddleWidth, predictedAiY, paddleWidth, paddleHeight);  // Predicted AI paddle
+        predCtx.fillRect(0, predictedPlayerY, paddleWidth, paddleHeight);
+        predCtx.fillRect(predictionCanvas.width - paddleWidth, predictedAiY, paddleWidth, paddleHeight);
 
-        // Predict score changes visually
         let predictedPlayerScore = playerScore;
         let predictedAiScore = aiScore;
         if (predictedBallX <= 0) predictedAiScore++;
         if (predictedBallX >= pongCanvas.width) predictedPlayerScore++;
 
-        // Display the predicted score (visually)
         predCtx.font = '30px Courier New';
         predCtx.fillText(predictedPlayerScore, predictionCanvas.width / 4, 50);
         predCtx.fillText(predictedAiScore, predictionCanvas.width - predictionCanvas.width / 4, 50);
     }
 
-    // Handle paddle controls
+    function randomizeBallAngle() {
+        let angle = Math.random() * 140 - 70;  // Random angle between -70 and 70 degrees
+        let speed = 3;  // Set the velocity to a consistent value
+
+        // Convert angle to radians
+        let angleInRadians = angle * Math.PI / 180;
+
+        // Calculate the new ball speed in X and Y directions
+        ballSpeedX = speed * Math.cos(angleInRadians);
+        ballSpeedY = speed * Math.sin(angleInRadians);
+    }
+
     document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowUp') upPressed = true;
         if (e.key === 'ArrowDown') downPressed = true;
@@ -228,12 +219,10 @@
         if (e.key === 'ArrowDown') downPressed = false;
     });
 
-    // Reset ball to center
     function resetBall() {
         ballX = pongCanvas.width / 2;
         ballY = pongCanvas.height / 2;
-        ballSpeedX = -ballSpeedX;
-        ballSpeedY = 2 * (Math.random() < 0.5 ? 1 : -1);
+        randomizeBallAngle();  // Reset ball with a random angle on each score
     }
 </script>
 </body>
