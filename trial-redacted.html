@@ -114,7 +114,7 @@
     const initialPause = 1000;
     let isTyping = false;
 
-    const knownFiles = ["log-12-7-97-fire-report"];
+    const knownFiles = ["log-12-7-97-fire-report", "operation-synonym"];
 
     function fakeIP() {
       return "192.placeholder.placeholder.placeholder";
@@ -168,7 +168,7 @@
       } else if (lower === "cmd" || lower === "cmds") {
         typeOut("Available Commands:\n- view:<repository-title>\n- files/declassified\n- simtest:PongPredict.v(delta)1.1\n- info:<agent-number>");
       } else if (lower === "files/declassified") {
-        typeOut("log-12-7-97-fire-report");
+        typeOut("log-12-7-97-fire-report\noperation-synonym");
       } else if (lower === "simtest:pongpredict.v(delta)1.1") {
         typeOut("Opening simulation test...");
         setTimeout(() => window.open("https://smolly-co.github.io/mirror-loop/pong-predict.html", "_blank"), 3000);
