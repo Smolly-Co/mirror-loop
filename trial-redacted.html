@@ -41,7 +41,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding-bottom: 40px;
+      padding-bottom: 25px;
       position: relative;
     }
 
@@ -72,12 +72,8 @@
     }
 
     @keyframes flicker {
-      0%, 19%, 21%, 99% {
-        opacity: 1;
-      }
-      20%, 100% {
-        opacity: 0;
-      }
+      0%, 19%, 21%, 99% { opacity: 1; }
+      20%, 100% { opacity: 0; }
     }
 
     #output::-webkit-scrollbar {
@@ -90,7 +86,6 @@
 
   <div id="clock">00:00:00:000</div>
   <div id="output"></div>
-
   <div id="input-area">
     <input type="text" id="command" autocomplete="off" placeholder="execute function..." />
     <button id="send-btn">Send</button>
@@ -106,20 +101,20 @@
     const initialPause = 1000;
     let isTyping = false;
 
-    // ✨ Clock with stutter effect
+    const knownFiles = ["placeholder"];
+
+    function randomIP(start = 192) {
+      return `${start}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
+    }
+
+    // ✨ Clock with lag/spurt stutter
     let realTime = Date.now();
     function updateClock() {
       const now = Date.now();
-      const skew = (Math.random() < 0.1) ? (Math.random() * 1000 - 500) : 0;
+      const skew = (Math.random() < 0.15) ? (Math.random() * 1000 - 500) : 0;
       realTime += (now - realTime) + skew;
       const d = new Date(realTime);
-
-      const hh = String(d.getHours()).padStart(2, '0');
-      const mm = String(d.getMinutes()).padStart(2, '0');
-      const ss = String(d.getSeconds()).padStart(2, '0');
-      const ms = String(d.getMilliseconds()).padStart(3, '0');
-      clock.textContent = `${hh}:${mm}:${ss}:${ms}`;
-
+      clock.textContent = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}:${String(d.getMilliseconds()).padStart(3, '0')}`;
       setTimeout(updateClock, 100);
     }
     updateClock();
@@ -148,45 +143,44 @@
       const input = commandInput.value.trim();
       if (input === "" || isTyping) return;
       isTyping = true;
-
       output.textContent += `\n>>> ${input}\n`;
-      const lowerInput = input.toLowerCase();
 
-      // Easter Eggs
-      if (lowerInput === "hello" || lowerInput === "hello?") {
+      const lower = input.toLowerCase();
+
+      if (lower === "hello" || lower === "hello?") {
         typeOut("INTENDED ENTRY POINT IDENTIFIED. WELCOME BACK V-[REDACTED]");
-      } else if (lowerInput === "shutdown") {
+      } else if (lower === "shutdown") {
         typeOut("[WARNING] Shutdown terminates V-[REDACTED] human lifeforms. Press c to confirm.");
-      } else if (lowerInput === "c") {
-        const fakeIP = `192.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
-        typeOut(`[ERROR] Attempted breech of 'Entity Awareness Violation' '${fakeIP}' forwarded to [REDACTED]`);
-      }
-
-      // Command list
-      else if (lowerInput === "cmd" || lowerInput === "cmds") {
-        typeOut("Available Commands: view:<repository-title>, files/declassified, simtest:PongPredict.v(delta)1.1");
-      }
-
-      // files/declassified
-      else if (lowerInput === "files/declassified") {
+      } else if (lower === "c") {
+        typeOut(`[ERROR] Attempted breech of 'Entity Awareness Violation' '${randomIP()}' forwarded to [REDACTED]`);
+      } else if (lower === "cmd" || lower === "cmds") {
+        typeOut("Available Commands: view:<repository-title>, files/declassified, simtest:PongPredict.v(delta)1.1, info:<agent-number>");
+      } else if (lower === "files/declassified") {
         typeOut("Placeholder.pdf\nPlaceholder.pdf\nPlaceholder.pdf");
-      }
-
-      // simtest link
-      else if (lowerInput === "simtest:pongpredict.v(delta)1.1") {
+      } else if (lower === "simtest:pongpredict.v(delta)1.1") {
         typeOut("Opening simulation test...");
         setTimeout(() => window.open("https://smolly-co.github.io/mirror-loop/pong-predict", "_blank"), 3000);
-      }
-
-      // view:<file>
-      else if (lowerInput.startsWith("view:")) {
-        const file = lowerInput.slice(5);
-        typeOut(`Opening ${file}.pdf`);
-        setTimeout(() => window.open(`${file}.pdf`, "_blank"), 3000);
-      }
-
-      // unknown
-      else {
+      } else if (lower.startsWith("view:")) {
+        const file = lower.slice(5);
+        if (knownFiles.includes(file)) {
+          typeOut(`Opening ${file}.pdf`);
+          setTimeout(() => window.open(`${file}.pdf`, "_blank"), 3000);
+        } else {
+          typeOut("This file either does not exist, or is under level >0 Classification");
+        }
+      } else if (lower.startsWith("info:")) {
+        const agent = input.split(":")[1];
+        if (/^V-\d{3}$/i.test(agent)) {
+          if (agent === "V-913") {
+            typeOut("ANOMALY IDENTIFIED. 913 is demonstrating ATYPICAL behaviour: signs of self-awareness, prolonged stares at monitor nodes, etc.");
+          } else {
+            const prefix = agent.split("-")[1];
+            typeOut(`Performing as expected. Nearest monitor node: ${randomIP(parseInt(prefix))}`);
+          }
+        } else {
+          typeOut("[ERROR] Invalid agent identifier format. Use V-###");
+        }
+      } else {
         typeOut("[ERROR] Command not recognised.");
       }
 
@@ -196,9 +190,7 @@
 
     sendBtn.addEventListener("click", runCommand);
     commandInput.addEventListener("keypress", function (e) {
-      if (e.key === "Enter") {
-        runCommand();
-      }
+      if (e.key === "Enter") runCommand();
     });
   </script>
 </body>
